@@ -1,0 +1,628 @@
+/* =====================================================
+   BUDGETBUDDY WELCOME PAGE
+===================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+.welcome-page {
+  position: fixed;
+  inset: 0;
+
+  width: 100vw;
+  height: 100vh;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  color: #ffffff;
+
+  background:
+    radial-gradient(
+      circle at 15% 25%,
+      rgba(0, 217, 255, 0.13),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 85% 70%,
+      rgba(132, 76, 255, 0.18),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #070a10 0%,
+      #0b111b 42%,
+      #101222 70%,
+      #0b0915 100%
+    );
+
+  font-family: "Segoe UI", Inter, Arial, sans-serif;
+}
+
+
+/* =====================================================
+   GRID
+===================================================== */
+
+.welcome-grid {
+  position: fixed;
+  inset: 0;
+
+  background-image:
+    linear-gradient(
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px
+    );
+
+  background-size: 55px 55px;
+
+  pointer-events: none;
+}
+
+
+/* =====================================================
+   GLOW
+===================================================== */
+
+.welcome-glow {
+  position: fixed;
+
+  border-radius: 50%;
+
+  filter: blur(110px);
+
+  pointer-events: none;
+}
+
+.welcome-glow-one {
+  width: 420px;
+  height: 420px;
+
+  left: -160px;
+  top: 15%;
+
+  background: rgba(0, 220, 255, 0.10);
+}
+
+.welcome-glow-two {
+  width: 500px;
+  height: 500px;
+
+  right: -170px;
+  bottom: -160px;
+
+  background: rgba(125, 65, 255, 0.16);
+}
+
+
+/* =====================================================
+   NAVBAR
+===================================================== */
+
+.welcome-nav {
+  position: relative;
+
+  z-index: 10;
+
+  width: 100%;
+
+  padding: 30px 55px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+}
+
+
+/* BRAND */
+
+.welcome-brand {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+}
+
+.welcome-brand-icon {
+  width: 50px;
+  height: 50px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+
+  color: #00e5ff;
+
+  font-size: 23px;
+
+  font-weight: 800;
+
+  background: rgba(0, 229, 255, 0.07);
+
+  border: 1px solid rgba(0, 229, 255, 0.35);
+
+  box-shadow:
+    0 0 25px rgba(0, 229, 255, 0.12);
+}
+
+.welcome-brand h2 {
+  margin: 0;
+
+  color: #f4f7ff;
+
+  font-size: 24px;
+
+  letter-spacing: -0.5px;
+}
+
+.welcome-brand h2 span {
+  color: #00e5ff;
+}
+
+.welcome-brand p {
+  margin: 3px 0 0;
+
+  color: #667087;
+
+  font-size: 9px;
+
+  letter-spacing: 2px;
+}
+
+
+/* NAV BUTTONS */
+
+.welcome-nav-actions {
+  display: flex;
+
+  gap: 12px;
+}
+
+.welcome-login-btn,
+.welcome-register-btn {
+  height: 42px;
+
+  padding: 0 22px;
+
+  border-radius: 9px;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
+}
+
+.welcome-login-btn {
+  background: transparent;
+
+  color: #b8c1d4;
+
+  border: 1px solid #303746;
+}
+
+.welcome-login-btn:hover {
+  color: #ffffff;
+
+  border-color: #00dff5;
+
+  background: rgba(0, 223, 245, 0.06);
+}
+
+.welcome-register-btn {
+  color: #061015;
+
+  border: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      #00dff5,
+      #00d7b0
+    );
+
+  box-shadow:
+    0 8px 25px rgba(0, 220, 230, 0.15);
+}
+
+.welcome-register-btn:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 12px 35px rgba(0, 220, 230, 0.25);
+}
+
+
+/* =====================================================
+   HERO
+===================================================== */
+
+.welcome-content {
+  position: relative;
+
+  z-index: 5;
+
+  max-width: 900px;
+
+  margin: 0 auto;
+
+  padding: 80px 25px 100px;
+
+  text-align: center;
+}
+
+
+/* BADGE */
+
+.welcome-badge {
+  display: inline-block;
+
+  padding: 8px 15px;
+
+  border-radius: 30px;
+
+  color: #00dff5;
+
+  background: rgba(0, 223, 245, 0.06);
+
+  border: 1px solid rgba(0, 223, 245, 0.20);
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  letter-spacing: 2px;
+}
+
+
+/* HEADING */
+
+.welcome-content h1 {
+  margin: 25px 0 20px;
+
+  color: #f6f8ff;
+
+  font-size: 64px;
+
+  line-height: 1.05;
+
+  letter-spacing: -2.5px;
+}
+
+.welcome-content h1 span {
+  color: #00e5ff;
+
+  text-shadow:
+    0 0 35px rgba(0, 229, 255, 0.25);
+}
+
+
+/* DESCRIPTION */
+
+.welcome-description {
+  max-width: 650px;
+
+  margin: 0 auto;
+
+  color: #8792a8;
+
+  font-size: 16px;
+
+  line-height: 1.7;
+}
+
+
+/* =====================================================
+   HERO ACTIONS
+===================================================== */
+
+.welcome-actions {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 14px;
+
+  margin-top: 34px;
+}
+
+.welcome-primary-btn {
+  height: 52px;
+
+  padding: 0 25px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  color: #061015;
+
+  background:
+    linear-gradient(
+      90deg,
+      #00dff5,
+      #00d7b0
+    );
+
+  font-size: 14px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 12px 35px rgba(0, 220, 230, 0.18);
+
+  transition: 0.25s ease;
+}
+
+.welcome-primary-btn span {
+  font-size: 19px;
+}
+
+.welcome-primary-btn:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 17px 45px rgba(0, 220, 230, 0.28);
+}
+
+.welcome-secondary-btn {
+  height: 52px;
+
+  padding: 0 21px;
+
+  border-radius: 10px;
+
+  border: 1px solid #303746;
+
+  background: rgba(255, 255, 255, 0.02);
+
+  color: #9da7ba;
+
+  font-size: 13px;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
+}
+
+.welcome-secondary-btn:hover {
+  color: #ffffff;
+
+  border-color: rgba(0, 223, 245, 0.4);
+
+  background: rgba(0, 223, 245, 0.05);
+}
+
+
+/* =====================================================
+   FEATURES
+===================================================== */
+
+.welcome-features {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 15px;
+
+  margin-top: 75px;
+}
+
+.welcome-feature {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  padding: 18px;
+
+  text-align: left;
+
+  border-radius: 13px;
+
+  background:
+    rgba(255, 255, 255, 0.025);
+
+  border: 1px solid rgba(255, 255, 255, 0.07);
+
+  transition: 0.25s ease;
+}
+
+.welcome-feature:hover {
+  transform: translateY(-3px);
+
+  border-color:
+    rgba(0, 223, 245, 0.25);
+
+  background:
+    rgba(0, 223, 245, 0.04);
+}
+
+.feature-icon {
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  color: #00e5ff;
+
+  background:
+    rgba(0, 229, 255, 0.07);
+
+  border:
+    1px solid rgba(0, 229, 255, 0.18);
+
+  font-size: 18px;
+
+  font-weight: 700;
+}
+
+.welcome-feature h3 {
+  margin: 0 0 4px;
+
+  color: #e9edf5;
+
+  font-size: 13px;
+}
+
+.welcome-feature p {
+  margin: 0;
+
+  color: #687389;
+
+  font-size: 11px;
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.welcome-footer {
+  position: fixed;
+
+  bottom: 20px;
+
+  left: 0;
+
+  width: 100%;
+
+  text-align: center;
+
+  color: #424b5e;
+
+  font-size: 10px;
+
+  letter-spacing: 0.4px;
+
+  z-index: 5;
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 800px) {
+
+  .welcome-nav {
+    padding: 22px 25px;
+  }
+
+  .welcome-content {
+    padding-top: 60px;
+  }
+
+  .welcome-content h1 {
+    font-size: 50px;
+  }
+
+  .welcome-features {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+  .welcome-nav {
+    padding: 18px;
+  }
+
+  .welcome-brand-icon {
+    width: 42px;
+    height: 42px;
+
+    font-size: 20px;
+  }
+
+  .welcome-brand h2 {
+    font-size: 20px;
+  }
+
+  .welcome-brand p {
+    font-size: 8px;
+  }
+
+  .welcome-nav-actions {
+    gap: 6px;
+  }
+
+  .welcome-login-btn,
+  .welcome-register-btn {
+    height: 38px;
+
+    padding: 0 12px;
+
+    font-size: 11px;
+  }
+
+  .welcome-content {
+    padding:
+      55px 18px 80px;
+  }
+
+  .welcome-content h1 {
+    font-size: 40px;
+
+    letter-spacing: -1.5px;
+  }
+
+  .welcome-description {
+    font-size: 13px;
+  }
+
+  .welcome-actions {
+    flex-direction: column;
+  }
+
+  .welcome-primary-btn,
+  .welcome-secondary-btn {
+    width: 100%;
+  }
+
+  .welcome-features {
+    margin-top: 50px;
+  }
+
+  .welcome-footer {
+    display: none;
+  }
+}
