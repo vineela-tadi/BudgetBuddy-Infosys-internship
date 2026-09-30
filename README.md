@@ -1,1 +1,1 @@
-# BudgetBuddy-Infosys-internship
+# BudgetBuddy-Infosys Internship
