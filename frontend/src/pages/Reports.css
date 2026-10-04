@@ -1,0 +1,530 @@
+/* Reports page - shares Dashboard navbar styles */
+
+.reports-page {
+min-height: 100vh;
+background: #0b0f17;
+color: #f4f7fb;
+font-family: Inter, Arial, sans-serif;
+}
+
+.reports-page *,
+.reports-page *::before,
+.reports-page *::after {
+box-sizing: border-box;
+}
+
+/* Main content */
+
+.reports-main {
+width: min(1120px, 90%);
+margin: 0 auto;
+padding: 42px 0 24px;
+}
+
+.reports-heading {
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 20px;
+margin-bottom: 30px;
+}
+
+.reports-eyebrow {
+color: #00dff5;
+font-size: 11px;
+font-weight: 750;
+letter-spacing: 2px;
+}
+
+.reports-heading h1 {
+margin: 10px 0 9px;
+font-size: clamp(27px, 4vw, 36px);
+font-weight: 750;
+letter-spacing: -1px;
+}
+
+.reports-heading p,
+.reports-filter-card > div > p,
+.reports-result-heading p,
+.reports-breakdown-heading p {
+margin: 0;
+color: #929daf;
+font-size: 14px;
+line-height: 1.7;
+}
+
+.reports-heading-icon {
+width: 64px;
+height: 64px;
+flex-shrink: 0;
+display: grid;
+place-items: center;
+border: 1px solid rgba(0, 223, 245, 0.16);
+border-radius: 18px;
+background: rgba(0, 223, 245, 0.08);
+color: #00dff5;
+font-size: 34px;
+}
+
+/* Filters */
+
+.reports-filter-card {
+margin-bottom: 34px;
+padding: 25px;
+border: 1px solid #252d3b;
+border-radius: 17px;
+background: #121824;
+}
+
+.reports-filter-card h2,
+.reports-result-heading h2,
+.reports-breakdown-heading h2 {
+margin: 0 0 7px;
+font-size: 18px;
+font-weight: 700;
+}
+
+.reports-filter-controls {
+display: flex;
+align-items: flex-end;
+flex-wrap: wrap;
+gap: 16px;
+margin-top: 22px;
+}
+
+.reports-field {
+display: flex;
+flex: 1 1 150px;
+flex-direction: column;
+gap: 9px;
+min-width: 0;
+}
+
+.reports-field span {
+color: #b7c0cf;
+font-size: 12px;
+font-weight: 600;
+}
+
+.reports-field select,
+.reports-field input {
+width: 100%;
+height: 44px;
+padding: 0 12px;
+border: 1px solid #30394a;
+border-radius: 9px;
+outline: none;
+background: #0c111b;
+color: #f3f6fc;
+font: inherit;
+font-size: 14px;
+color-scheme: dark;
+}
+
+.reports-field select:focus,
+.reports-field input:focus {
+border-color: #00dff5;
+}
+
+.reports-generate-btn {
+min-height: 44px;
+padding: 0 19px;
+border: 1px solid #00dff5;
+border-radius: 9px;
+background: #00c5dc;
+color: #061219;
+font-size: 13px;
+font-weight: 750;
+cursor: pointer;
+transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.reports-generate-btn:hover {
+background: #42e6f5;
+}
+
+.reports-generate-btn:disabled {
+cursor: wait;
+opacity: 0.65;
+}
+
+/* Report heading */
+
+.reports-result-heading {
+display: flex;
+justify-content: space-between;
+align-items: center;
+flex-wrap: wrap;
+gap: 16px;
+margin-bottom: 20px;
+}
+
+.reports-period-badge {
+padding: 8px 13px;
+border: 1px solid rgba(0, 223, 245, 0.2);
+border-radius: 20px;
+background: rgba(0, 223, 245, 0.08);
+color: #00dff5;
+font-size: 12px;
+font-weight: 700;
+}
+
+/* Summary cards */
+
+.reports-summary-grid {
+display: grid;
+grid-template-columns: repeat(3, minmax(0, 1fr));
+gap: 19px;
+margin-bottom: 25px;
+}
+
+.reports-summary-card {
+position: relative;
+min-width: 0;
+overflow: hidden;
+padding: 23px;
+border: 1px solid #252d3b;
+border-radius: 16px;
+background: #121824;
+transition: border-color 0.2s ease;
+}
+
+.reports-summary-card:hover {
+border-color: #414e62;
+}
+
+.reports-card-top {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 10px;
+color: #a6b0c0;
+font-size: 13px;
+font-weight: 600;
+}
+
+.reports-card-icon {
+width: 38px;
+height: 38px;
+display: grid;
+place-items: center;
+border-radius: 11px;
+font-size: 20px;
+font-weight: 700;
+}
+
+.income-card .reports-card-icon {
+background: rgba(69, 224, 164, 0.1);
+color: #45e0a4;
+}
+
+.expense-card .reports-card-icon {
+background: rgba(255, 100, 125, 0.1);
+color: #ff8193;
+}
+
+.balance-card .reports-card-icon {
+background: rgba(101, 200, 255, 0.1);
+color: #65c8ff;
+}
+
+.reports-summary-card h3 {
+margin: 23px 0 9px;
+overflow-wrap: anywhere;
+font-size: clamp(23px, 2.5vw, 30px);
+font-weight: 750;
+letter-spacing: -0.7px;
+}
+
+.income-card h3 {
+color: #45e0a4;
+}
+
+.expense-card h3 {
+color: #ff8193;
+}
+
+.balance-card h3 {
+color: #65c8ff;
+}
+
+.reports-summary-card > p {
+margin: 0 0 12px;
+color: #8994a7;
+font-size: 12px;
+line-height: 1.6;
+}
+
+.reports-card-accent {
+position: absolute;
+bottom: 0;
+left: 0;
+width: 100%;
+height: 3px;
+}
+
+.income-card .reports-card-accent {
+background: #45e0a4;
+}
+
+.expense-card .reports-card-accent {
+background: #ff8193;
+}
+
+.balance-card .reports-card-accent {
+background: #65c8ff;
+}
+
+/* Income vs expenses */
+
+.reports-breakdown-card {
+padding: 26px;
+border: 1px solid #252d3b;
+border-radius: 16px;
+background: #121824;
+}
+
+.reports-breakdown-heading {
+margin-bottom: 28px;
+}
+
+.reports-bar-row {
+margin-bottom: 24px;
+}
+
+.reports-bar-label {
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex-wrap: wrap;
+gap: 12px;
+margin-bottom: 12px;
+}
+
+.reports-bar-label > span {
+display: flex;
+align-items: center;
+gap: 9px;
+color: #c5cedb;
+font-size: 13px;
+}
+
+.reports-bar-label strong {
+color: #edf2fa;
+font-size: 14px;
+overflow-wrap: anywhere;
+}
+
+.reports-dot {
+width: 9px;
+height: 9px;
+display: inline-block;
+border-radius: 50%;
+}
+
+.income-dot {
+background: #45e0a4;
+}
+
+.expense-dot {
+background: #ff8193;
+}
+
+.reports-bar-track {
+height: 11px;
+overflow: hidden;
+border-radius: 20px;
+background: #252d3b;
+}
+
+.reports-bar {
+height: 100%;
+border-radius: 20px;
+transition: width 0.35s ease;
+}
+
+.income-bar {
+background: #45e0a4;
+}
+
+.expense-bar {
+background: #ff8193;
+}
+
+.reports-balance-note {
+display: flex;
+justify-content: space-between;
+align-items: center;
+flex-wrap: wrap;
+gap: 12px;
+margin-top: 28px;
+padding-top: 19px;
+border-top: 1px solid #293140;
+color: #a6b0c0;
+font-size: 13px;
+}
+
+.reports-balance-note strong {
+color: #65c8ff;
+font-size: 18px;
+}
+
+.reports-balance-note .negative-balance {
+color: #ff8193;
+}
+
+/* Loading, error and empty states */
+
+.reports-message,
+.reports-error,
+.reports-empty {
+margin: 25px 0;
+padding: 30px;
+border: 1px solid #293140;
+border-radius: 14px;
+background: #121824;
+text-align: center;
+}
+
+.reports-message {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 12px;
+color: #bdc7d6;
+font-size: 14px;
+}
+
+.reports-spinner {
+width: 20px;
+height: 20px;
+border: 2px solid #344253;
+border-top-color: #00dff5;
+border-radius: 50%;
+animation: reports-spin 0.8s linear infinite;
+}
+
+@keyframes reports-spin {
+to {
+transform: rotate(360deg);
+}
+}
+
+.reports-error {
+border-color: rgba(255, 100, 125, 0.25);
+color: #ff9aa8;
+}
+
+.reports-error h3 {
+margin-top: 0;
+}
+
+.reports-error p {
+font-size: 13px;
+line-height: 1.7;
+overflow-wrap: anywhere;
+}
+
+.reports-error button {
+padding: 10px 16px;
+border: 1px solid #ff8193;
+border-radius: 8px;
+background: transparent;
+color: #ff9aa8;
+cursor: pointer;
+}
+
+.reports-empty-icon {
+margin-bottom: 12px;
+color: #00dff5;
+font-size: 35px;
+}
+
+.reports-empty h2 {
+margin: 0 0 9px;
+font-size: 18px;
+}
+
+.reports-empty p {
+margin: 0;
+color: #929daf;
+font-size: 13px;
+line-height: 1.7;
+}
+
+/* Footer */
+
+.reports-footer {
+padding: 30px 0 10px;
+color: #687487;
+font-size: 12px;
+text-align: center;
+}
+
+/* Responsive content */
+
+@media (max-width: 950px) {
+.reports-main {
+width: 92%;
+padding-top: 30px;
+}
+
+.reports-summary-grid {
+grid-template-columns: 1fr;
+gap: 14px;
+}
+
+.reports-summary-card {
+padding: 21px;
+}
+
+.reports-summary-card h3 {
+font-size: 27px;
+}
+
+.reports-filter-controls {
+align-items: stretch;
+}
+
+.reports-field {
+flex-basis: 100%;
+}
+
+.reports-generate-btn {
+width: 100%;
+}
+}
+
+@media (max-width: 480px) {
+.reports-main {
+width: 92%;
+}
+
+.reports-heading-icon {
+width: 47px;
+height: 47px;
+font-size: 26px;
+}
+
+.reports-heading h1 {
+font-size: 28px;
+}
+
+.reports-heading p {
+font-size: 13px;
+}
+
+.reports-filter-card,
+.reports-breakdown-card {
+padding: 18px;
+}
+}
+
+@media (prefers-reduced-motion: reduce) {
+.reports-page *,
+.reports-page *::before,
+.reports-page *::after {
+animation-duration: 0.01ms !important;
+transition-duration: 0.01ms !important;
+}
+}

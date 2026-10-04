@@ -1,6 +1,8 @@
+
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Budget.css";
+import "./Dashboard.css";
 
 const API_URL = "http://127.0.0.1:8000";
 
@@ -43,6 +45,7 @@ function Budget() {
     }, 3000);
   };
 
+  // FETCH BUDGETS
   const fetchBudgets = async () => {
     const token = getToken();
 
@@ -70,11 +73,9 @@ function Budget() {
       }
 
       const data = await response.json();
-
       setBudgets(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Fetch budget error:", error);
-
       showMessage(
         error.message || "Unable to load budgets",
         "error"
@@ -88,6 +89,7 @@ function Budget() {
     fetchBudgets();
   }, []);
 
+  // ADD BUDGET
   const handleAddBudget = async (e) => {
     e.preventDefault();
 
@@ -103,11 +105,11 @@ function Budget() {
       return;
     }
 
-    if (Number(allocatedAmount) <= 0) {
-      showMessage(
-        "Amount must be greater than 0",
-        "error"
-      );
+    if (
+      !Number.isFinite(Number(allocatedAmount)) ||
+      Number(allocatedAmount) <= 0
+    ) {
+      showMessage("Amount must be greater than 0", "error");
       return;
     }
 
@@ -130,7 +132,7 @@ function Budget() {
         }),
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (response.status === 401) {
         clearAuth();
@@ -139,23 +141,16 @@ function Budget() {
       }
 
       if (!response.ok) {
-        throw new Error(
-          data.detail || "Failed to add budget"
-        );
+        throw new Error(data.detail || "Failed to add budget");
       }
 
-      showMessage(
-        "Budget added successfully!",
-        "success"
-      );
-
+      showMessage("Budget added successfully!", "success");
       setCategory("");
       setAllocatedAmount("");
 
       await fetchBudgets();
     } catch (error) {
       console.error("Add budget error:", error);
-
       showMessage(
         error.message || "Failed to add budget",
         "error"
@@ -165,21 +160,22 @@ function Budget() {
     }
   };
 
+  // START EDITING
   const startEdit = (budget) => {
     setEditingId(budget.id);
     setEditCategory(budget.category || "");
-    setEditAmount(
-      budget.allocated_amount ?? ""
-    );
+    setEditAmount(String(budget.allocated_amount ?? ""));
     setMessage("");
   };
 
+  // CANCEL EDITING
   const cancelEdit = () => {
     setEditingId(null);
     setEditCategory("");
     setEditAmount("");
   };
 
+  // UPDATE BUDGET
   const handleUpdateBudget = async (budgetId) => {
     const token = getToken();
 
@@ -189,18 +185,15 @@ function Budget() {
     }
 
     if (!editCategory.trim()) {
-      showMessage(
-        "Please enter a category",
-        "error"
-      );
+      showMessage("Please enter a category", "error");
       return;
     }
 
-    if (Number(editAmount) <= 0) {
-      showMessage(
-        "Amount must be greater than 0",
-        "error"
-      );
+    if (
+      !Number.isFinite(Number(editAmount)) ||
+      Number(editAmount) <= 0
+    ) {
+      showMessage("Amount must be greater than 0", "error");
       return;
     }
 
@@ -226,7 +219,7 @@ function Budget() {
         }
       );
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (response.status === 401) {
         clearAuth();
@@ -240,17 +233,12 @@ function Budget() {
         );
       }
 
-      showMessage(
-        "Budget updated successfully!",
-        "success"
-      );
-
+      showMessage("Budget updated successfully!", "success");
       cancelEdit();
 
       await fetchBudgets();
     } catch (error) {
       console.error("Update budget error:", error);
-
       showMessage(
         error.message || "Failed to update budget",
         "error"
@@ -260,14 +248,13 @@ function Budget() {
     }
   };
 
+  // DELETE BUDGET
   const handleDeleteBudget = async (budgetId) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this budget?"
     );
 
-    if (!confirmDelete) {
-      return;
-    }
+    if (!confirmDelete) return;
 
     const token = getToken();
 
@@ -296,24 +283,20 @@ function Budget() {
       }
 
       if (!response.ok) {
-        const data = await response
-          .json()
-          .catch(() => ({}));
-
+        const data = await response.json().catch(() => ({}));
         throw new Error(
           data.detail || "Failed to delete budget"
         );
       }
 
-      showMessage(
-        "Budget deleted successfully!",
-        "success"
-      );
+      if (editingId === budgetId) {
+        cancelEdit();
+      }
 
+      showMessage("Budget deleted successfully!", "success");
       await fetchBudgets();
     } catch (error) {
       console.error("Delete budget error:", error);
-
       showMessage(
         error.message || "Failed to delete budget",
         "error"
@@ -323,6 +306,7 @@ function Budget() {
     }
   };
 
+  // TOTAL BUDGET
   const totalBudget = useMemo(() => {
     return budgets.reduce(
       (sum, item) =>
@@ -331,6 +315,7 @@ function Budget() {
     );
   }, [budgets]);
 
+  // LOGOUT
   const handleLogout = () => {
     clearAuth();
     navigate("/login");
@@ -338,64 +323,76 @@ function Budget() {
 
   return (
     <div className="budget-page">
-
-      {/* HEADER - SAME AS DASHBOARD */}
-
-      <header className="budget-header">
-
-        <div
-          className="budget-brand-area"
-          onClick={() => navigate("/dashboard")}
-        >
-          <div className="budget-brand-logo">
+      {/* SAME NAVBAR STRUCTURE AS DASHBOARD */}
+      <header className="dashboard-navbar">
+        <div className="brand-area">
+          <div
+            className="brand-logo"
+            onClick={() => navigate("/dashboard")}
+            style={{ cursor: "pointer" }}
+          >
             BB
           </div>
 
           <div>
-            <div className="budget-brand-name">
-              BudgetBuddy
-            </div>
-
-            {/* SAME AS DASHBOARD */}
-            <div className="budget-brand-tagline">
+            <div className="brand-name">BudgetBuddy</div>
+            <div className="brand-tagline">
               Money, made simple.
             </div>
           </div>
         </div>
 
-        <nav className="budget-nav">
-
+        <nav className="dashboard-nav">
           <button
-            className="budget-nav-item"
+            className="nav-item"
             onClick={() => navigate("/dashboard")}
           >
             Overview
           </button>
 
           <button
-            className="budget-nav-item"
+            className="nav-item"
             onClick={() => navigate("/income")}
           >
             Income
           </button>
 
           <button
-            className="budget-nav-item"
+            className="nav-item"
             onClick={() => navigate("/expenses")}
           >
             Expenses
           </button>
 
-          <button className="budget-nav-item active">
+          <button className="nav-item active">
             Budgets
           </button>
 
-        </nav>
-
-        <div className="budget-nav-right">
+          <button
+            className="nav-item"
+            onClick={() => navigate("/analytics")}
+          >
+            Analytics
+          </button>
 
           <button
-            className="budget-profile-circle"
+            className="nav-item"
+            onClick={() => navigate("/notifications")}
+          >
+            Notifications
+          </button>
+
+          <button
+            className="nav-item"
+            onClick={() => navigate("/reports")}
+          >
+            Reports
+          </button>
+        </nav>
+
+        <div className="nav-right">
+          <button
+            className="profile-circle"
             onClick={() => navigate("/profile")}
             title="Open Profile"
           >
@@ -403,24 +400,18 @@ function Budget() {
           </button>
 
           <button
-            className="budget-logout-link"
+            className="logout-link"
             onClick={handleLogout}
           >
             Logout
           </button>
-
         </div>
-
       </header>
 
-      {/* MAIN */}
-
+      {/* MAIN CONTENT */}
       <main className="budget-container">
-
         <section className="budget-heading">
-
           <div>
-
             <span className="budget-eyebrow">
               PERSONAL FINANCE
             </span>
@@ -432,14 +423,12 @@ function Budget() {
             </h1>
 
             <p>
-              Set spending limits and manage your
-              monthly budget with ease.
+              Set spending limits and manage your monthly budget
+              with ease.
             </p>
-
           </div>
 
           <div className="total-budget-card">
-
             <span>Total Budget</span>
 
             <strong>
@@ -448,85 +437,60 @@ function Budget() {
 
             <small>
               {budgets.length}{" "}
-              {budgets.length === 1
-                ? "category"
-                : "categories"}
+              {budgets.length === 1 ? "category" : "categories"}
             </small>
-
           </div>
-
         </section>
 
         {/* ADD BUDGET */}
-
         <section className="budget-form-card">
-
           <div className="section-title">
-
             <div>
               <span>CREATE BUDGET</span>
               <h2>Add Budget</h2>
             </div>
 
-            <div className="plus-icon">
-              +
-            </div>
-
+            <div className="plus-icon">+</div>
           </div>
 
           <form onSubmit={handleAddBudget}>
-
             <div className="form-grid">
-
               <div className="form-group">
-
                 <label>Category</label>
 
                 <input
                   type="text"
                   placeholder="Food / Travel / Shopping"
                   value={category}
-                  onChange={(e) =>
-                    setCategory(e.target.value)
-                  }
+                  onChange={(e) => setCategory(e.target.value)}
                   required
                 />
-
               </div>
 
               <div className="form-group">
-
                 <label>Allocated Amount</label>
 
                 <div className="input-with-symbol">
-
                   <span>₹</span>
 
                   <input
                     type="number"
-                    min="0"
+                    min="0.01"
                     step="0.01"
                     placeholder="0.00"
                     value={allocatedAmount}
                     onChange={(e) =>
-                      setAllocatedAmount(
-                        e.target.value
-                      )
+                      setAllocatedAmount(e.target.value)
                     }
                     required
                   />
-
                 </div>
-
               </div>
-
             </div>
 
             <div className="form-bottom">
-
               <p>
-                Set a realistic limit for each
-                spending category.
+                Set a realistic limit for each spending category.
               </p>
 
               <button
@@ -534,19 +498,13 @@ function Budget() {
                 className="add-budget-button"
                 disabled={saving}
               >
-                {saving
-                  ? "Saving..."
-                  : "＋ Add Budget"}
+                {saving ? "Saving..." : "＋ Add Budget"}
               </button>
-
             </div>
-
           </form>
-
         </section>
 
-        {/* MESSAGE */}
-
+        {/* STATUS MESSAGE */}
         {message && (
           <div
             className={`budget-message ${
@@ -556,9 +514,7 @@ function Budget() {
             }`}
           >
             <span>
-              {messageType === "error"
-                ? "!"
-                : "✓"}
+              {messageType === "error" ? "!" : "✓"}
             </span>
 
             {message}
@@ -566,151 +522,98 @@ function Budget() {
         )}
 
         {/* BUDGET HISTORY */}
-
         <section className="budget-records">
-
           <div className="records-header">
-
             <div>
               <span>YOUR PLAN</span>
               <h2>Budget categories</h2>
             </div>
 
-            <button
-              onClick={() =>
-                navigate("/dashboard")
-              }
-            >
+            <button onClick={() => navigate("/dashboard")}>
               ← Dashboard
             </button>
-
           </div>
 
           {loading ? (
-
             <div className="budget-empty">
-
-              <div className="loading-small"></div>
-
+              <div className="loading-small" />
               <p>Loading budgets...</p>
-
             </div>
-
           ) : budgets.length === 0 ? (
-
             <div className="budget-empty">
-
-              <div className="empty-budget-icon">
-                ₹
-              </div>
-
+              <div className="empty-budget-icon">₹</div>
               <h3>No budgets yet</h3>
-
               <p>
-                Add your first budget above and
-                it will appear here.
+                Add your first budget above and it will appear
+                here.
               </p>
-
             </div>
-
           ) : (
-
             <div className="budget-list">
-
               {budgets.map((item) => (
-
-                <div
-                  className="budget-row"
-                  key={item.id}
-                >
-
-                  <div className="budget-row-icon">
-                    ₹
-                  </div>
+                <div className="budget-row" key={item.id}>
+                  <div className="budget-row-icon">₹</div>
 
                   {editingId === item.id ? (
-
                     <div className="budget-edit-area">
-
                       <input
                         type="text"
+                        aria-label="Budget category"
                         value={editCategory}
                         onChange={(e) =>
-                          setEditCategory(
-                            e.target.value
-                          )
+                          setEditCategory(e.target.value)
                         }
                       />
 
                       <div className="edit-amount">
-
                         <span>₹</span>
 
                         <input
                           type="number"
-                          min="0"
+                          min="0.01"
                           step="0.01"
+                          aria-label="Allocated amount"
                           value={editAmount}
                           onChange={(e) =>
-                            setEditAmount(
-                              e.target.value
-                            )
+                            setEditAmount(e.target.value)
                           }
                         />
-
                       </div>
-
                     </div>
-
                   ) : (
-
                     <div className="budget-row-info">
-
                       <strong>
-                        {item.category ||
-                          "Budget"}
+                        {item.category || "Budget"}
                       </strong>
 
-                      <span>
-                        Monthly budget
-                      </span>
-
+                      <span>Monthly budget</span>
                     </div>
-
                   )}
 
                   {editingId === item.id ? (
-
                     <div className="budget-edit-actions">
-
                       <button
+                        type="button"
                         className="save-edit"
                         onClick={() =>
-                          handleUpdateBudget(
-                            item.id
-                          )
+                          handleUpdateBudget(item.id)
                         }
                         disabled={saving}
                       >
-                        {saving
-                          ? "Saving..."
-                          : "Save"}
+                        {saving ? "Saving..." : "Save"}
                       </button>
 
                       <button
+                        type="button"
                         className="cancel-edit"
                         onClick={cancelEdit}
                         disabled={saving}
                       >
                         Cancel
                       </button>
-
                     </div>
-
                   ) : (
-
                     <>
-
                       <div className="budget-row-amount">
                         ₹
                         {Number(
@@ -719,77 +622,53 @@ function Budget() {
                       </div>
 
                       <div className="budget-row-actions">
-
                         <button
+                          type="button"
                           className="edit-budget"
-                          onClick={() =>
-                            startEdit(item)
-                          }
+                          onClick={() => startEdit(item)}
+                          disabled={deletingId !== null}
                         >
                           Edit
                         </button>
 
                         <button
+                          type="button"
                           className="delete-budget"
                           onClick={() =>
-                            handleDeleteBudget(
-                              item.id
-                            )
+                            handleDeleteBudget(item.id)
                           }
-                          disabled={
-                            deletingId === item.id
-                          }
+                          disabled={deletingId !== null}
                         >
                           {deletingId === item.id
                             ? "Deleting..."
                             : "Delete"}
                         </button>
-
                       </div>
-
                     </>
-
                   )}
-
                 </div>
-
               ))}
-
             </div>
-
           )}
-
         </section>
 
-        {/* CTA */}
-
+        {/* BOTTOM SECTION */}
         <section className="budget-cta">
-
           <div>
-
             <span>STAY ON TRACK</span>
 
-            <h2>
-              Give every rupee a purpose.
-            </h2>
+            <h2>Give every rupee a purpose.</h2>
 
             <p>
-              Head back to your dashboard to see
-              your overall financial progress.
+              Head back to your dashboard to see your overall
+              financial progress.
             </p>
-
           </div>
 
-          <button
-            onClick={() =>
-              navigate("/dashboard")
-            }
-          >
+          <button onClick={() => navigate("/dashboard")}>
             View Dashboard →
           </button>
-
         </section>
-
       </main>
     </div>
   );

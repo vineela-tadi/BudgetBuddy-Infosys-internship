@@ -1241,3 +1241,17 @@
     gap: 10px;
   }
 }
+html {
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
+.dashboard-navbar {
+  box-sizing: border-box;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.nav-item {
+  transform: none;
+}

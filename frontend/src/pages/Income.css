@@ -528,3 +528,126 @@
     width: 100%;
   }
 }
+
+/* INLINE INCOME EDITING */
+
+.income-item-left {
+  min-width: 0;
+  flex: 1;
+}
+
+.income-item-details {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.income-edit-fields {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  max-width: 340px;
+  min-width: 0;
+  margin-left: 12px;
+}
+
+.income-edit-fields input,
+.income-edit-fields textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(0, 223, 245, 0.3);
+  border-radius: 8px;
+  background: #171a22;
+  color: #f2f5fa;
+  font: inherit;
+  font-size: 13px;
+}
+
+.income-edit-fields input:focus,
+.income-edit-fields textarea:focus {
+  outline: 1px solid #00dff5;
+}
+
+.income-edit-actions,
+.income-item-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.income-save-btn,
+.income-cancel-btn,
+.edit-income-btn {
+  padding: 7px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.income-save-btn {
+  background: #00dff5;
+  color: #071117;
+  border: 1px solid #00dff5;
+}
+
+.income-cancel-btn {
+  background: #303644;
+  color: #fff;
+  border: 1px solid #454d5e;
+}
+
+.edit-income-btn {
+  background: rgba(0, 223, 245, 0.1);
+  color: #00dff5;
+  border: 1px solid rgba(0, 223, 245, 0.35);
+}
+
+.income-item-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.income-save-btn:disabled,
+.income-cancel-btn:disabled,
+.edit-income-btn:disabled,
+.delete-income-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.income-message.error {
+  border-color: rgba(255, 90, 90, 0.35);
+  color: #ff8585;
+}
+
+.income-message.success {
+  color: #00dff5;
+}
+
+@media (max-width: 650px) {
+  .income-item {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .income-item-left {
+    width: 100%;
+  }
+
+  .income-edit-fields {
+    max-width: none;
+    margin-left: 8px;
+  }
+
+  .income-item-right {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}

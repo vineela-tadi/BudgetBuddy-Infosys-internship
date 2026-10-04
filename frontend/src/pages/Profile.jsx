@@ -1,8 +1,24 @@
-import React, { useEffect, useState } from "react";
+
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./Dashboard.css";
 import "./Profile.css";
 
 const API_URL = "http://127.0.0.1:8000";
+
+function getToken() {
+  return (
+    localStorage.getItem("token") ||
+    localStorage.getItem("access_token") ||
+    localStorage.getItem("authToken")
+  );
+}
+
+function clearAuth() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("authToken");
+}
 
 function Profile() {
   const navigate = useNavigate();
@@ -21,70 +37,63 @@ function Profile() {
   const [messageType, setMessageType] = useState("");
 
   useEffect(() => {
+    let cancelled = false;
+
+    const fetchProfile = async () => {
+      try {
+        const token = getToken();
+
+        if (!token) {
+          navigate("/login", { replace: true });
+          return;
+        }
+
+        const response = await fetch(`${API_URL}/profile/`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 401) {
+          clearAuth();
+          navigate("/login", { replace: true });
+          return;
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.detail || "Unable to load profile"
+          );
+        }
+
+        if (cancelled) return;
+
+        setProfile(data);
+        setName(data.name || "");
+        setEmail(data.email || "");
+        setPhone(data.phone || "");
+      } catch (error) {
+        if (cancelled) return;
+
+        console.error("Profile error:", error);
+        setMessage(error.message || "Unable to load profile");
+        setMessageType("error");
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
     fetchProfile();
-  }, []);
 
-  const getToken = () => {
-    return (
-      localStorage.getItem("token") ||
-      localStorage.getItem("access_token") ||
-      localStorage.getItem("authToken")
-    );
-  };
-
-  const clearAuth = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("authToken");
-  };
-
-  const fetchProfile = async () => {
-    try {
-      const token = getToken();
-
-      if (!token) {
-        navigate("/login");
-        return;
-      }
-
-      const response = await fetch(`${API_URL}/profile/`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.status === 401) {
-        clearAuth();
-        navigate("/login");
-        return;
-      }
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.detail || "Unable to load profile"
-        );
-      }
-
-      setProfile(data);
-
-      setName(data.name || "");
-      setEmail(data.email || "");
-      setPhone(data.phone || "");
-    } catch (error) {
-      console.error("Profile error:", error);
-
-      setMessage(
-        error.message || "Unable to load profile"
-      );
-
-      setMessageType("error");
-    } finally {
-      setLoading(false);
-    }
-  };
+    return () => {
+      cancelled = true;
+    };
+  }, [navigate]);
 
   const handleEdit = () => {
     setMessage("");
@@ -112,7 +121,7 @@ function Profile() {
       const token = getToken();
 
       if (!token) {
-        navigate("/login");
+        navigate("/login", { replace: true });
         return;
       }
 
@@ -131,7 +140,7 @@ function Profile() {
 
       if (response.status === 401) {
         clearAuth();
-        navigate("/login");
+        navigate("/login", { replace: true });
         return;
       }
 
@@ -144,22 +153,16 @@ function Profile() {
       }
 
       setProfile(data);
-
       setName(data.name || "");
       setEmail(data.email || "");
       setPhone(data.phone || "");
 
       setEditing(false);
-
       setMessage("Profile updated successfully!");
       setMessageType("success");
     } catch (error) {
       console.error("Update profile error:", error);
-
-      setMessage(
-        error.message || "Something went wrong"
-      );
-
+      setMessage(error.message || "Something went wrong");
       setMessageType("error");
     } finally {
       setSaving(false);
@@ -168,134 +171,133 @@ function Profile() {
 
   const handleLogout = () => {
     clearAuth();
-    navigate("/login");
+    navigate("/login", { replace: true });
   };
 
   if (loading) {
     return (
       <div className="profile-page">
-
-        <div className="profile-grid"></div>
+        <div className="profile-grid" />
 
         <div className="profile-loading">
-
-          <div className="profile-loading-logo">
-            BB
-          </div>
-
+          <div className="profile-loading-logo">BB</div>
           <p>Loading profile...</p>
-
         </div>
-
       </div>
     );
   }
 
   return (
     <div className="profile-page">
+      <div className="profile-grid" />
 
-      <div className="profile-grid"></div>
+      {/* DASHBOARD NAVBAR */}
 
-
-      {/* HEADER */}
-
-      <header className="profile-header">
-
+      <header className="dashboard-navbar">
         {/* BRAND */}
 
         <div
-          className="profile-brand"
+          className="brand-area"
           onClick={() => navigate("/dashboard")}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              navigate("/dashboard");
+            }
+          }}
         >
+          <div className="brand-logo">BB</div>
 
-          <div className="profile-brand-icon">
-            BB
-          </div>
-
-          <div className="profile-brand-text">
-
-            <h2>
-              BudgetBuddy
-            </h2>
-
-            <p>
+          <div>
+            <div className="brand-name">BudgetBuddy</div>
+            <div className="brand-tagline">
               Money, made simple.
-            </p>
-
+            </div>
           </div>
-
         </div>
-
 
         {/* NAVIGATION */}
 
-        <nav className="profile-nav">
-
+        <nav className="dashboard-nav">
           <button
+            className="nav-item"
             onClick={() => navigate("/dashboard")}
           >
             Overview
           </button>
 
           <button
+            className="nav-item"
             onClick={() => navigate("/income")}
           >
             Income
           </button>
 
           <button
+            className="nav-item"
             onClick={() => navigate("/expenses")}
           >
             Expenses
           </button>
 
           <button
+            className="nav-item"
             onClick={() => navigate("/budget")}
           >
             Budgets
           </button>
 
-        </nav>
-
-
-        {/* RIGHT SIDE */}
-
-        <div className="profile-header-right">
-
           <button
-            className="profile-small-avatar"
-            onClick={() => navigate("/profile")}
-            title="Profile"
+            className="nav-item"
+            onClick={() => navigate("/analytics")}
           >
-            {name
-              ? name.charAt(0).toUpperCase()
-              : "U"}
+            Analytics
           </button>
 
           <button
-            className="profile-logout"
+            className="nav-item"
+            onClick={() => navigate("/notifications")}
+          >
+            Notifications
+          </button>
+
+          <button
+            className="nav-item"
+            onClick={() => navigate("/reports")}
+          >
+            Reports
+          </button>
+        </nav>
+
+        {/* RIGHT SIDE */}
+
+        <div className="nav-right">
+          <button
+            className="profile-circle"
+            onClick={() => navigate("/profile")}
+            title="Open Profile"
+            aria-label="Open Profile"
+          >
+            {name ? name.charAt(0).toUpperCase() : "BB"}
+          </button>
+
+          <button
+            className="logout-link"
             onClick={handleLogout}
           >
             Logout
           </button>
-
         </div>
-
       </header>
 
-
-      {/* MAIN */}
+      {/* CENTERED PROFILE DETAILS */}
 
       <main className="profile-main">
+        <section className="profile-card">
+          {/* KEEP ORIGINAL BB LOGO */}
 
-        <div className="profile-card">
-
-          {/* ICON */}
-
-          <div className="profile-card-icon">
-            BB
-          </div>
-
+          <div className="profile-card-icon">BB</div>
 
           {/* TITLE */}
 
@@ -303,64 +305,49 @@ function Profile() {
             ACCOUNT SETTINGS
           </div>
 
-          <h1>
-            My Profile
-          </h1>
+          <h1>My Profile</h1>
 
           <p className="profile-subtitle">
             Manage your personal information
           </p>
 
-
-          {/* MESSAGE */}
+          {/* SUCCESS / ERROR MESSAGE */}
 
           {message && (
             <div
               className={`profile-message ${messageType}`}
+              role="status"
             >
-
               <span>
-                {messageType === "success"
-                  ? "✓"
-                  : "!"}
+                {messageType === "success" ? "✓" : "!"}
               </span>
 
               {message}
-
             </div>
           )}
 
-
-          {/* FORM */}
+          {/* PROFILE FORM */}
 
           <form
             className="profile-form"
             onSubmit={handleSubmit}
           >
-
             {!editing ? (
-
-              /* =========================
-                 NORMAL MODE
-              ========================= */
-
               <>
-
                 <div className="profile-display">
                   <span>Name:</span>
-                  {name || "Not added"}
+                  <div>{name || "Not added"}</div>
                 </div>
 
                 <div className="profile-display">
                   <span>Email:</span>
-                  {email || "Not added"}
+                  <div>{email || "Not added"}</div>
                 </div>
 
                 <div className="profile-display">
                   <span>Phone:</span>
-                  {phone || "Not added"}
+                  <div>{phone || "Not added"}</div>
                 </div>
-
 
                 <button
                   type="button"
@@ -370,77 +357,56 @@ function Profile() {
                   Edit Profile
                   <span>→</span>
                 </button>
-
               </>
-
             ) : (
-
-              /* =========================
-                 EDIT MODE
-              ========================= */
-
               <>
-
                 <div className="profile-field">
+                  <label htmlFor="profile-name">Name</label>
 
                   <input
+                    id="profile-name"
                     type="text"
                     value={name}
-                    onChange={(e) =>
-                      setName(e.target.value)
-                    }
+                    onChange={(e) => setName(e.target.value)}
                     placeholder="Enter your name"
                     required
                   />
-
                 </div>
 
-
                 <div className="profile-field">
+                  <label htmlFor="profile-email">Email</label>
 
                   <input
+                    id="profile-email"
                     type="email"
                     value={email}
-                    onChange={(e) =>
-                      setEmail(e.target.value)
-                    }
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
                     required
                   />
-
                 </div>
-
 
                 <div className="profile-field">
+                  <label htmlFor="profile-phone">Phone</label>
 
                   <input
+                    id="profile-phone"
                     type="tel"
                     value={phone}
-                    onChange={(e) =>
-                      setPhone(e.target.value)
-                    }
+                    onChange={(e) => setPhone(e.target.value)}
                     placeholder="Enter your phone number"
                   />
-
                 </div>
 
-
                 <div className="profile-actions">
-
                   <button
                     type="submit"
                     className="profile-save-button"
                     disabled={saving}
                   >
-
-                    {saving
-                      ? "Saving..."
-                      : "Save Changes"}
-
-                    <span>→</span>
-
+                    {saving ? "Saving..." : "Save Changes"}
+                    {!saving && <span>→</span>}
                   </button>
-
 
                   <button
                     type="button"
@@ -450,17 +416,12 @@ function Profile() {
                   >
                     Cancel
                   </button>
-
                 </div>
-
               </>
-
             )}
-
           </form>
 
-
-          {/* BACK BUTTON */}
+          {/* BACK TO DASHBOARD */}
 
           <button
             className="profile-back"
@@ -468,18 +429,14 @@ function Profile() {
           >
             ← Back to Dashboard
           </button>
-
-        </div>
-
+        </section>
       </main>
-
 
       {/* FOOTER */}
 
       <p className="profile-footer">
         Smart planning • Better spending • Brighter future
       </p>
-
     </div>
   );
 }

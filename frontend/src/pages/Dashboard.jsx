@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
@@ -62,6 +63,10 @@ function Dashboard() {
           return;
         }
 
+        if (!incomeRes.ok || !expenseRes.ok || !budgetRes.ok) {
+          throw new Error("Dashboard data load avvaledu.");
+        }
+
         const incomeData = await incomeRes.json();
         const expenseData = await expenseRes.json();
         const budgetData = await budgetRes.json();
@@ -79,26 +84,33 @@ function Dashboard() {
     fetchDashboardData();
   }, [navigate]);
 
-  const totalIncome = useMemo(() => {
-    return income.reduce(
-      (sum, item) => sum + Number(item.allocated_amount || item.amount || 0),
-      0
-    );
-  }, [income]);
+  const totalIncome = useMemo(
+    () =>
+      income.reduce(
+        (sum, item) =>
+          sum + Number(item.amount ?? item.allocated_amount ?? 0),
+        0
+      ),
+    [income]
+  );
 
-  const totalExpenses = useMemo(() => {
-    return expenses.reduce(
-      (sum, item) => sum + Number(item.amount || 0),
-      0
-    );
-  }, [expenses]);
+  const totalExpenses = useMemo(
+    () =>
+      expenses.reduce(
+        (sum, item) => sum + Number(item.amount || 0),
+        0
+      ),
+    [expenses]
+  );
 
-  const totalBudget = useMemo(() => {
-    return budgets.reduce(
-      (sum, item) => sum + Number(item.allocated_amount || 0),
-      0
-    );
-  }, [budgets]);
+  const totalBudget = useMemo(
+    () =>
+      budgets.reduce(
+        (sum, item) => sum + Number(item.allocated_amount || 0),
+        0
+      ),
+    [budgets]
+  );
 
   const balance = totalIncome - totalExpenses;
 
@@ -107,19 +119,12 @@ function Dashboard() {
 
     expenses.forEach((expense) => {
       const category = expense.category || "Other";
-
-      if (!grouped[category]) {
-        grouped[category] = 0;
-      }
-
-      grouped[category] += Number(expense.amount || 0);
+      grouped[category] =
+        (grouped[category] || 0) + Number(expense.amount || 0);
     });
 
     return Object.entries(grouped)
-      .map(([category, amount]) => ({
-        category,
-        amount,
-      }))
+      .map(([category, amount]) => ({ category, amount }))
       .sort((a, b) => b.amount - a.amount)
       .slice(0, 5);
   }, [expenses]);
@@ -129,7 +134,7 @@ function Dashboard() {
       id: `income-${item.id}`,
       type: "income",
       title: item.source || "Income",
-      amount: Number(item.amount || item.allocated_amount || 0),
+      amount: Number(item.amount ?? item.allocated_amount ?? 0),
       date: item.date,
     }));
 
@@ -142,7 +147,11 @@ function Dashboard() {
     }));
 
     return [...incomeTransactions, ...expenseTransactions]
-      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .sort(
+        (a, b) =>
+          new Date(b.date || 0).getTime() -
+          new Date(a.date || 0).getTime()
+      )
       .slice(0, 6);
   }, [income, expenses]);
 
@@ -153,9 +162,8 @@ function Dashboard() {
 
   const donutPercentage = Math.round(spendingPercentage);
 
-  const formatCurrency = (amount) => {
-    return `₹${Number(amount || 0).toLocaleString("en-IN")}`;
-  };
+  const formatCurrency = (amount) =>
+    `₹${Number(amount || 0).toLocaleString("en-IN")}`;
 
   const formatDate = (date) => {
     if (!date) return "--";
@@ -163,7 +171,7 @@ function Dashboard() {
     const parsedDate = new Date(date);
 
     if (Number.isNaN(parsedDate.getTime())) {
-      return date;
+      return String(date);
     }
 
     return parsedDate.toISOString().slice(0, 10);
@@ -173,7 +181,6 @@ function Dashboard() {
     localStorage.removeItem("token");
     localStorage.removeItem("access_token");
     localStorage.removeItem("authToken");
-
     navigate("/login");
   };
 
@@ -190,11 +197,9 @@ function Dashboard() {
 
   return (
     <div className="dashboard-page">
-      {/* NAVBAR */}
       <header className="dashboard-navbar">
         <div className="brand-area">
           <div className="brand-logo">BB</div>
-
           <div>
             <div className="brand-name">BudgetBuddy</div>
             <div className="brand-tagline">Money, made simple.</div>
@@ -229,6 +234,27 @@ function Dashboard() {
           >
             Budgets
           </button>
+
+          <button
+            className="nav-item"
+            onClick={() => navigate("/analytics")}
+          >
+            Analytics
+          </button>
+
+          <button
+            className="nav-item"
+            onClick={() => navigate("/notifications")}
+          >
+            Notifications
+          </button>
+
+          <button
+            className="nav-item"
+            onClick={() => navigate("/reports")}
+          >
+            Reports
+          </button>
         </nav>
 
         <div className="nav-right">
@@ -246,9 +272,7 @@ function Dashboard() {
         </div>
       </header>
 
-      {/* MAIN */}
       <main className="dashboard-main">
-        {/* HERO HEADING */}
         <section className="dashboard-intro">
           <div>
             <h1>
@@ -256,10 +280,7 @@ function Dashboard() {
               <br />
               <span>your direction.</span>
             </h1>
-
-            <p>
-              A clear view of what you earn, spend and save.
-            </p>
+            <p>A clear view of what you earn, spend and save.</p>
           </div>
 
           <div className="month-pill">
@@ -268,15 +289,12 @@ function Dashboard() {
           </div>
         </section>
 
-        {/* HERO BALANCE CARD */}
         <section className="balance-card">
           <div className="balance-main">
             <div className="balance-label">AVAILABLE BALANCE</div>
-
             <div className="balance-amount">
               {formatCurrency(balance)}
             </div>
-
             <p className="balance-description">
               Your current spending power after expenses.
             </p>
@@ -301,7 +319,6 @@ function Dashboard() {
           <div className="balance-stats">
             <div className="balance-stat">
               <div className="stat-icon income-icon">↑</div>
-
               <div>
                 <span>Income</span>
                 <strong>{formatCurrency(totalIncome)}</strong>
@@ -310,7 +327,6 @@ function Dashboard() {
 
             <div className="balance-stat">
               <div className="stat-icon expense-icon">↓</div>
-
               <div>
                 <span>Spent</span>
                 <strong>{formatCurrency(totalExpenses)}</strong>
@@ -319,7 +335,6 @@ function Dashboard() {
 
             <div className="balance-stat">
               <div className="stat-icon budget-icon">○</div>
-
               <div>
                 <span>Budget</span>
                 <strong>{formatCurrency(totalBudget)}</strong>
@@ -328,16 +343,13 @@ function Dashboard() {
           </div>
         </section>
 
-        {/* ANALYTICS */}
         <section className="analytics-grid">
-          {/* MONEY GOES */}
           <div className="dashboard-card money-card">
             <div className="card-heading">
               <div>
                 <span className="section-label">ANALYTICS</span>
                 <h2>Where your money goes</h2>
               </div>
-
               <span className="small-pill">This month</span>
             </div>
 
@@ -372,8 +384,7 @@ function Dashboard() {
                         <div className="category-name">
                           <span
                             className={`category-dot dot-${index}`}
-                          ></span>
-
+                          />
                           <span>{item.category}</span>
                         </div>
 
@@ -385,15 +396,12 @@ function Dashboard() {
                     );
                   })
                 ) : (
-                  <div className="empty-small">
-                    No expenses yet.
-                  </div>
+                  <div className="empty-small">No expenses yet.</div>
                 )}
               </div>
             </div>
           </div>
 
-          {/* BUDGET HEALTH */}
           <div className="dashboard-card budget-health-card">
             <div className="card-heading">
               <div>
@@ -413,30 +421,28 @@ function Dashboard() {
               <div className="budget-total">
                 {formatCurrency(totalBudget)}
               </div>
-
-              <div className="budget-subtitle">
-                Total planned
-              </div>
+              <div className="budget-subtitle">Total planned</div>
 
               <div className="progress-track">
                 <div
                   className="progress-fill"
                   style={{ width: `${spendingPercentage}%` }}
-                ></div>
+                />
               </div>
 
               <div className="progress-info">
-                <span>
-                  {formatCurrency(totalExpenses)} spent
-                </span>
-
-                <strong>{Math.round(spendingPercentage)}%</strong>
+                <span>{formatCurrency(totalExpenses)} spent</span>
+                <strong>
+                  {totalBudget > 0
+                    ? Math.round((totalExpenses / totalBudget) * 100)
+                    : 0}
+                  %
+                </strong>
               </div>
             </div>
           </div>
         </section>
 
-        {/* RECENT TRANSACTIONS */}
         <section className="dashboard-card transactions-card">
           <div className="card-heading transactions-heading">
             <div>
@@ -445,23 +451,15 @@ function Dashboard() {
             </div>
 
             <div className="transaction-actions">
-              <button onClick={() => navigate("/income")}>
-                Income
-              </button>
-
-              <button onClick={() => navigate("/expenses")}>
-                Expenses
-              </button>
+              <button onClick={() => navigate("/income")}>Income</button>
+              <button onClick={() => navigate("/expenses")}>Expenses</button>
             </div>
           </div>
 
           {recentTransactions.length > 0 ? (
             <div className="transactions-list">
               {recentTransactions.map((transaction) => (
-                <div
-                  className="transaction-row"
-                  key={transaction.id}
-                >
+                <div className="transaction-row" key={transaction.id}>
                   <div
                     className={`transaction-icon ${
                       transaction.type === "income"
@@ -494,15 +492,12 @@ function Dashboard() {
             <div className="empty-transactions">
               <div className="empty-icon">＋</div>
               <h3>No transactions yet</h3>
-              <p>
-                Add your first income or expense to see it here.
-              </p>
+              <p>Add your first income or expense to see it here.</p>
 
               <div className="empty-actions">
                 <button onClick={() => navigate("/income")}>
                   Add income
                 </button>
-
                 <button onClick={() => navigate("/expenses")}>
                   Add expense
                 </button>
@@ -511,7 +506,6 @@ function Dashboard() {
           )}
         </section>
 
-        {/* BOTTOM CTA */}
         <section className="planning-cta">
           <div>
             <span className="section-label">READY TO PLAN?</span>

@@ -7,7 +7,10 @@ from .routers import expenses
 from .routers import income
 from .routers import budget
 from .routers import savings_goals
-
+from .routers import dashboard
+from .routers import notifications
+from .routers import analytics
+from .routers import reports
 from app.routers.profile import router as profile_router
 
 
@@ -64,8 +67,19 @@ app.include_router(
     prefix="/profile",
     tags=["Profile"]
 )
+#dashboard router
+app.include_router(dashboard.router)
 
+#notifications router
+app.include_router(notifications.router)
 
+#analytics router
+app.include_router(analytics.router)
+
+#reports router
+app.include_router(reports.router)
+
+\
 # =========================================================
 # ROOT ENDPOINT
 # =========================================================

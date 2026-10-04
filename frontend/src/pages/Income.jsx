@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Income.css";
@@ -24,29 +25,42 @@ export default function Income() {
   const [income, setIncome] = useState([]);
   const [amount, setAmount] = useState("");
   const [source, setSource] = useState("");
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const [description, setDescription] = useState("");
+
   const [loading, setLoading] = useState(true);
+  const [adding, setAdding] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+  const [editingId, setEditingId] = useState(null);
+
+  const [editAmount, setEditAmount] = useState("");
+  const [editSource, setEditSource] = useState("");
+  const [editDate, setEditDate] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
 
-  const token = getToken();
-
-  useEffect(() => {
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
-    fetchIncome();
-  }, []);
+  const showMessage = (text, type = "success") => {
+    setMessage(text);
+    setMessageType(type);
+  };
 
   const fetchIncome = async () => {
     try {
-      const authToken = getToken();
+      const token = getToken();
+
+      if (!token) {
+        navigate("/login");
+        return;
+      }
 
       const response = await fetch(`${API_BASE}/income/`, {
         headers: {
-          Authorization: `Bearer ${authToken}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -56,35 +70,59 @@ export default function Income() {
         return;
       }
 
+      const data = await response.json().catch(() => null);
+
       if (!response.ok) {
-        throw new Error("Failed to fetch income");
+        throw new Error(data?.detail || "Failed to fetch income.");
       }
 
-      const data = await response.json();
       setIncome(Array.isArray(data) ? data : []);
     } catch (error) {
-      setMessage("Unable to load income.");
+      showMessage(error.message || "Unable to load income.", "error");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAddIncome = async (e) => {
-    e.preventDefault();
-
-    if (!amount || !source || !date) {
-      setMessage("Please fill all required fields.");
+  useEffect(() => {
+    if (!getToken()) {
+      navigate("/login");
       return;
     }
 
+    fetchIncome();
+  }, []);
+
+  // ADD INCOME
+  const handleAddIncome = async (e) => {
+    e.preventDefault();
+
+    if (!amount || !source.trim() || !date) {
+      showMessage("Please fill all required fields.", "error");
+      return;
+    }
+
+    if (!Number.isFinite(Number(amount)) || Number(amount) <= 0) {
+      showMessage("Amount must be greater than zero.", "error");
+      return;
+    }
+
+    setAdding(true);
+    setMessage("");
+
     try {
-      const authToken = getToken();
+      const token = getToken();
+
+      if (!token) {
+        navigate("/login");
+        return;
+      }
 
       const response = await fetch(`${API_BASE}/income/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${authToken}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           amount: Number(amount),
@@ -100,32 +138,91 @@ export default function Income() {
         return;
       }
 
+      const data = await response.json().catch(() => null);
+
       if (!response.ok) {
-        throw new Error("Failed to add income");
+        throw new Error(data?.detail || "Failed to add income.");
       }
 
       setAmount("");
       setSource("");
-      setDate("");
+      setDate(new Date().toISOString().split("T")[0]);
       setDescription("");
-      setMessage("Income added successfully.");
 
-      fetchIncome();
+      showMessage("Income added successfully.");
+      await fetchIncome();
     } catch (error) {
-      setMessage("Unable to add income.");
+      showMessage(error.message || "Unable to add income.", "error");
+    } finally {
+      setAdding(false);
     }
   };
 
-  const handleDelete = async (incomeId) => {
-    try {
-      const authToken = getToken();
+  // START INLINE EDIT
+  const handleEdit = (item) => {
+    setEditingId(item.id);
+    setEditAmount(String(item.amount ?? ""));
+    setEditSource(item.source || "");
+    setEditDate(
+      item.date
+        ? String(item.date).slice(0, 10)
+        : new Date().toISOString().split("T")[0]
+    );
+    setEditDescription(item.description || "");
+    setMessage("");
+  };
 
-      const response = await fetch(`${API_BASE}/income/${incomeId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
+  // CANCEL EDIT
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditAmount("");
+    setEditSource("");
+    setEditDate("");
+    setEditDescription("");
+  };
+
+  // UPDATE INCOME
+  const handleUpdateIncome = async (incomeId) => {
+    if (!editAmount || !editSource.trim() || !editDate) {
+      showMessage("Please fill all required fields.", "error");
+      return;
+    }
+
+    if (
+      !Number.isFinite(Number(editAmount)) ||
+      Number(editAmount) <= 0
+    ) {
+      showMessage("Amount must be greater than zero.", "error");
+      return;
+    }
+
+    const token = getToken();
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    setSaving(true);
+    setMessage("");
+
+    try {
+      const response = await fetch(
+        `${API_BASE}/income/${incomeId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            amount: Number(editAmount),
+            source: editSource.trim(),
+            date: editDate,
+            description: editDescription.trim(),
+          }),
+        }
+      );
 
       if (response.status === 401) {
         clearAuth();
@@ -133,15 +230,81 @@ export default function Income() {
         return;
       }
 
+      const data = await response.json().catch(() => null);
+
       if (!response.ok) {
-        throw new Error("Failed to delete income");
+        const detail = Array.isArray(data?.detail)
+          ? data.detail.map((item) => item.msg).join(", ")
+          : data?.detail;
+
+        throw new Error(detail || "Failed to update income.");
       }
 
-      setMessage("Income deleted successfully.");
-      fetchIncome();
+      cancelEdit();
+      showMessage("Income updated successfully.");
+      await fetchIncome();
     } catch (error) {
-      setMessage("Unable to delete income.");
+      showMessage(error.message || "Unable to update income.", "error");
+    } finally {
+      setSaving(false);
     }
+  };
+
+  // DELETE INCOME
+  const handleDelete = async (incomeId) => {
+    if (!window.confirm("Are you sure you want to delete this income?")) {
+      return;
+    }
+
+    const token = getToken();
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    setDeletingId(incomeId);
+    setMessage("");
+
+    try {
+      const response = await fetch(
+        `${API_BASE}/income/${incomeId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 401) {
+        clearAuth();
+        navigate("/login");
+        return;
+      }
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(data?.detail || "Failed to delete income.");
+      }
+
+      if (editingId === incomeId) {
+        cancelEdit();
+      }
+
+      showMessage("Income deleted successfully.");
+      await fetchIncome();
+    } catch (error) {
+      showMessage(error.message || "Unable to delete income.", "error");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const handleLogout = () => {
+    clearAuth();
+    navigate("/login");
   };
 
   const totalIncome = income.reduce(
@@ -153,15 +316,10 @@ export default function Income() {
     (a, b) => new Date(b.date) - new Date(a.date)
   );
 
-  const handleLogout = () => {
-    clearAuth();
-    navigate("/login");
-  };
-
   return (
     <div className="income-page">
 
-      {/* SAME HEADER AS BUDGET */}
+      {/* NAVBAR */}
       <header className="income-nav">
         <div
           className="income-brand"
@@ -202,12 +360,34 @@ export default function Income() {
           >
             Budgets
           </button>
+
+          <button
+            className="income-nav-item"
+            onClick={() => navigate("/analytics")}
+          >
+            Analytics
+          </button>
+
+          <button
+            className="income-nav-item"
+            onClick={() => navigate("/notifications")}
+          >
+            Notifications
+          </button>
+
+          <button
+            className="income-nav-item"
+            onClick={() => navigate("/reports")}
+          >
+            Reports
+          </button>
         </nav>
 
         <div className="income-nav-right">
           <button
             className="income-avatar"
             onClick={() => navigate("/profile")}
+            title="Open Profile"
           >
             BB
           </button>
@@ -223,7 +403,6 @@ export default function Income() {
 
       {/* MAIN CONTENT */}
       <main className="income-main">
-
         <section className="income-heading">
           <div>
             <p className="income-eyebrow">FINANCIAL TRACKING</p>
@@ -235,18 +414,24 @@ export default function Income() {
 
           <div className="income-total">
             <span>Total Income</span>
-            <strong>₹{totalIncome.toLocaleString("en-IN")}</strong>
+            <strong>
+              ₹{totalIncome.toLocaleString("en-IN")}
+            </strong>
           </div>
         </section>
 
         {message && (
-          <div className="income-message">
+          <div
+            className={`income-message ${
+              messageType === "error" ? "error" : "success"
+            }`}
+            role="status"
+          >
             {message}
           </div>
         )}
 
         <section className="income-grid">
-
           {/* ADD INCOME */}
           <div className="income-form-section">
             <div className="section-title">
@@ -255,7 +440,6 @@ export default function Income() {
             </div>
 
             <form onSubmit={handleAddIncome} className="income-form">
-
               <div className="form-group">
                 <label>Amount *</label>
                 <input
@@ -263,7 +447,9 @@ export default function Income() {
                   placeholder="Enter amount"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  min="0"
+                  min="0.01"
+                  step="0.01"
+                  required
                 />
               </div>
 
@@ -274,6 +460,7 @@ export default function Income() {
                   placeholder="Salary, Freelance, etc."
                   value={source}
                   onChange={(e) => setSource(e.target.value)}
+                  required
                 />
               </div>
 
@@ -283,6 +470,7 @@ export default function Income() {
                   type="date"
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
+                  required
                 />
               </div>
 
@@ -296,8 +484,12 @@ export default function Income() {
                 />
               </div>
 
-              <button type="submit" className="add-income-btn">
-                Add Income
+              <button
+                type="submit"
+                className="add-income-btn"
+                disabled={adding}
+              >
+                {adding ? "Adding..." : "Add Income"}
               </button>
             </form>
           </div>
@@ -310,9 +502,7 @@ export default function Income() {
             </div>
 
             {loading ? (
-              <div className="income-empty">
-                Loading income...
-              </div>
+              <div className="income-empty">Loading income...</div>
             ) : sortedIncome.length === 0 ? (
               <div className="income-empty">
                 <h3>No income records yet</h3>
@@ -321,46 +511,112 @@ export default function Income() {
             ) : (
               <div className="income-list">
                 {sortedIncome.map((item) => (
-                  <div
-                    className="income-item"
-                    key={item.id}
-                  >
+                  <div className="income-item" key={item.id}>
                     <div className="income-item-left">
-                      <div className="income-item-icon">
-                        ₹
-                      </div>
+                      <div className="income-item-icon">₹</div>
 
-                      <div>
-                        <h3>{item.source}</h3>
+                      {editingId === item.id ? (
+                        <div className="income-edit-fields">
+                          <input
+                            type="number"
+                            min="0.01"
+                            step="0.01"
+                            aria-label="Edit amount"
+                            placeholder="Amount"
+                            value={editAmount}
+                            onChange={(e) => setEditAmount(e.target.value)}
+                          />
 
-                        <p>
-                          {item.description || "No description"}
-                        </p>
+                          <input
+                            type="text"
+                            aria-label="Edit source"
+                            placeholder="Source"
+                            value={editSource}
+                            onChange={(e) => setEditSource(e.target.value)}
+                          />
 
-                        <span>
-                          {item.date}
-                        </span>
-                      </div>
+                          <input
+                            type="date"
+                            aria-label="Edit date"
+                            value={editDate}
+                            onChange={(e) => setEditDate(e.target.value)}
+                          />
+
+                          <textarea
+                            aria-label="Edit description"
+                            placeholder="Description (optional)"
+                            value={editDescription}
+                            onChange={(e) =>
+                              setEditDescription(e.target.value)
+                            }
+                            rows="2"
+                          />
+
+                          <div className="income-edit-actions">
+                            <button
+                              type="button"
+                              className="income-save-btn"
+                              onClick={() => handleUpdateIncome(item.id)}
+                              disabled={saving}
+                            >
+                              {saving ? "Saving..." : "Save"}
+                            </button>
+
+                            <button
+                              type="button"
+                              className="income-cancel-btn"
+                              onClick={cancelEdit}
+                              disabled={saving}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="income-item-details">
+                          <h3>{item.source}</h3>
+                          <p>{item.description || "No description"}</p>
+                          <span>{item.date}</span>
+                        </div>
+                      )}
                     </div>
 
-                    <div className="income-item-right">
-                      <strong>
-                        +₹{Number(item.amount).toLocaleString("en-IN")}
-                      </strong>
+                    {editingId !== item.id && (
+                      <div className="income-item-right">
+                        <strong>
+                          +₹{Number(item.amount || 0).toLocaleString("en-IN")}
+                        </strong>
 
-                      <button
-                        onClick={() => handleDelete(item.id)}
-                        className="delete-income-btn"
-                      >
-                        Delete
-                      </button>
-                    </div>
+                        <div className="income-item-actions">
+                          <button
+                            type="button"
+                            className="edit-income-btn"
+                            onClick={() => handleEdit(item)}
+                            disabled={
+                              saving || adding || deletingId !== null
+                            }
+                          >
+                            Edit
+                          </button>
+
+                          <button
+                            type="button"
+                            className="delete-income-btn"
+                            onClick={() => handleDelete(item.id)}
+                            disabled={
+                              saving || adding || deletingId !== null
+                            }
+                          >
+                            {deletingId === item.id ? "Deleting..." : "Delete"}
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             )}
           </div>
-
         </section>
 
         <section className="income-footer-card">
@@ -377,7 +633,6 @@ export default function Income() {
             Track Expenses
           </button>
         </section>
-
       </main>
     </div>
   );

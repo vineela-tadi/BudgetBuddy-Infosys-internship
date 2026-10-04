@@ -1,5 +1,13 @@
+
+/* =====================================
+   PROFILE PAGE BACKGROUND
+===================================== */
+
 .profile-page {
   min-height: 100vh;
+  position: relative;
+  overflow-x: clip;
+
   background:
     radial-gradient(
       circle at 10% 10%,
@@ -14,30 +22,17 @@
     #080b12;
 
   color: #e8edf5;
-
-  font-family:
-    Inter,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-
-  position: relative;
-  overflow-x: hidden;
+  font-family: Inter, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-
-/* =========================
-   BACKGROUND
-========================= */
+/* Background grid */
 
 .profile-grid {
   position: fixed;
   inset: 0;
-
+  z-index: 0;
   pointer-events: none;
-
   opacity: 0.18;
 
   background-image:
@@ -53,295 +48,104 @@
 
   background-size: 42px 42px;
 
-  mask-image:
-    linear-gradient(
-      to bottom,
-      black,
-      transparent 90%
-    );
+  mask-image: linear-gradient(
+    to bottom,
+    black,
+    transparent 90%
+  );
 }
 
+/* =====================================
+   DASHBOARD NAVBAR INTEGRATION
+===================================== */
 
-.profile-glow {
-  position: fixed;
-  width: 420px;
-  height: 420px;
-
-  border-radius: 50%;
-
-  pointer-events: none;
-
-  filter: blur(100px);
-
-  opacity: 0.10;
-}
-
-
-.profile-glow-one {
-  top: -180px;
-  left: -180px;
-
-  background: #00dff5;
-}
-
-
-.profile-glow-two {
-  right: -180px;
-  top: 200px;
-
-  background: #7d41ff;
-}
-
-
-/* =========================
-   HEADER
-========================= */
-
-.profile-header {
-  height: 76px;
-  width: 100%;
-
-  padding: 0 5%;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  gap: 30px;
-
-  background: rgba(8, 11, 18, 0.82);
-
-  border-bottom:
-    1px solid rgba(255, 255, 255, 0.07);
-
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-
+.profile-page .dashboard-navbar {
   position: sticky;
   top: 0;
-
   z-index: 100;
-
+  width: 100%;
   box-sizing: border-box;
 }
 
+/* Square profile button */
 
-/* =========================
-   BRAND
-========================= */
-
-.profile-brand {
-  display: flex;
-  align-items: center;
-
-  gap: 12px;
-
-  min-width: 190px;
-
-  cursor: pointer;
-}
-
-
-.profile-brand-icon {
+.profile-page .profile-circle {
   width: 40px;
   height: 40px;
+  flex-shrink: 0;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 11px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 223, 245, 0.25);
 
-  background:
-    linear-gradient(
-      135deg,
-      #00dff5,
-      #7d41ff
-    );
-
-  color: #ffffff;
-
-  font-size: 14px;
-  font-weight: 800;
-
-  box-shadow:
-    0 0 20px
-    rgba(0, 223, 245, 0.22);
-}
-
-
-.profile-brand h2 {
-  margin: 0;
-
-  color: #f5f8fc;
-
-  font-size: 18px;
-  font-weight: 700;
-
-  letter-spacing: -0.4px;
-}
-
-
-.profile-brand h2 span {
-  color: #ffffff;
-}
-
-
-.profile-brand p {
-  margin: 2px 0 0;
-
-  color: #70798a;
-
-  font-size: 10px;
-
-  letter-spacing: 1.3px;
-
-  text-transform: uppercase;
-}
-
-
-/* =========================
-   NAVIGATION
-========================= */
-
-.profile-nav {
-  display: flex;
-  align-items: center;
-
-  gap: 6px;
-}
-
-
-.profile-nav button {
-  border: 0;
-
-  background: transparent;
-
-  color: #8c95a5;
-
-  padding: 10px 15px;
-
-  border-radius: 9px;
-
-  font-size: 13px;
-  font-weight: 600;
-
-  cursor: pointer;
-
-  transition: 0.25s ease;
-}
-
-
-.profile-nav button:hover {
-  color: #ffffff;
-
-  background:
-    rgba(0, 223, 245, 0.07);
-}
-
-
-/* =========================
-   RIGHT SIDE
-========================= */
-
-.profile-header-right {
-  display: flex;
-  align-items: center;
-
-  gap: 14px;
-}
-
-
-.profile-small-avatar {
-  width: 37px;
-  height: 37px;
-
-  border-radius: 50%;
-
-  border:
-    1px solid
-    rgba(0, 223, 245, 0.25);
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(0, 223, 245, 0.12),
-      rgba(125, 65, 255, 0.13)
-    );
+  background: linear-gradient(
+    135deg,
+    rgba(0, 223, 245, 0.12),
+    rgba(125, 65, 255, 0.16)
+  );
 
   color: #00dff5;
-
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 800;
 
   cursor: pointer;
-
   transition: 0.25s ease;
 }
 
-
-.profile-small-avatar:hover {
+.profile-page .profile-circle:hover {
   transform: translateY(-2px);
-
-  border-color:
-    rgba(0, 223, 245, 0.55);
-
-  box-shadow:
-    0 0 18px
-    rgba(0, 223, 245, 0.15);
+  border-color: rgba(0, 223, 245, 0.6);
+  box-shadow: 0 0 18px rgba(0, 223, 245, 0.18);
 }
 
+/* Keep profile content above background */
 
-.profile-logout {
-  border: 0;
-
-  background: transparent;
-
-  color: #858e9e;
-
-  font-size: 13px;
-  font-weight: 600;
-
-  cursor: pointer;
-
-  transition: 0.25s ease;
-}
-
-
-.profile-logout:hover {
-  color: #ff6b81;
-}
-
-
-/* =========================
-   MAIN
-========================= */
-
-.profile-main {
-  width: min(760px, 90%);
-
-  margin: 0 auto;
-
-  padding: 60px 0 40px;
-
+.profile-page .dashboard-navbar,
+.profile-page .profile-main,
+.profile-page .profile-footer {
   position: relative;
-
   z-index: 2;
 }
 
+.profile-page .dashboard-navbar {
+  position: sticky;
+}
 
-/* =========================
-   PROFILE BOX
-========================= */
+/* =====================================
+   CENTER PROFILE CARD
+===================================== */
+
+.profile-main {
+  width: 100%;
+  min-height: calc(100vh - 145px);
+  box-sizing: border-box;
+
+  margin: 0 auto;
+  padding: 40px 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+  z-index: 2;
+}
+
+/* Square-corner details box */
 
 .profile-card {
+  width: 100%;
+  max-width: 520px;
+  box-sizing: border-box;
+  min-height: 400px;
+
   padding: 35px;
 
-  border-radius: 22px;
-
-  border:
-    1px solid
-    rgba(0, 223, 245, 0.13);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 223, 245, 0.18);
 
   background:
     radial-gradient(
@@ -351,24 +155,18 @@
     ),
     linear-gradient(
       145deg,
-      rgba(18, 24, 36, 0.96),
+      rgba(18, 24, 36, 0.97),
       rgba(11, 15, 24, 0.98)
     );
 
   box-shadow:
-    0 25px 70px
-    rgba(0, 0, 0, 0.35),
-
-    inset 0 1px 0
-    rgba(255, 255, 255, 0.035);
-
-  position: relative;
+    0 20px 60px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
 }
 
-
-/* =========================
-   CARD LOGO
-========================= */
+/* =====================================
+   ORIGINAL BB CARD LOGO
+===================================== */
 
 .profile-card-icon {
   width: 48px;
@@ -379,244 +177,191 @@
   justify-content: center;
 
   border-radius: 13px;
+  border: 1px solid rgba(0, 223, 245, 0.20);
 
-  background:
-    linear-gradient(
-      135deg,
-      #00dff5,
-      #7d41ff
-    );
-
-  border:
-    1px solid
-    rgba(0, 223, 245, 0.20);
+  background: linear-gradient(
+    135deg,
+    #00dff5,
+    #7d41ff
+  );
 
   color: #ffffff;
-
   font-size: 13px;
   font-weight: 800;
 
-  box-shadow:
-    0 0 25px
-    rgba(0, 223, 245, 0.16);
-
+  box-shadow: 0 0 25px rgba(0, 223, 245, 0.16);
   margin-bottom: 22px;
 }
 
-
-/* =========================
+/* =====================================
    TITLE
-========================= */
+===================================== */
 
 .profile-small-title {
   color: #00dff5;
-
   font-size: 10px;
-
   font-weight: 700;
-
   letter-spacing: 1.7px;
 }
 
-
 .profile-card h1 {
   margin: 8px 0 0;
-
   color: #f4f7fb;
-
-  font-size: 38px;
-
-  line-height: 1;
-
-  letter-spacing: -1.5px;
-
+  font-size: 34px;
+  line-height: 1.2;
+  letter-spacing: -1px;
   font-weight: 750;
 }
 
-
 .profile-subtitle {
   margin: 10px 0 0;
-
   color: #7f8999;
-
   font-size: 13px;
+  line-height: 1.6;
 }
 
-
-/* =========================
-   MESSAGE
-========================= */
+/* =====================================
+   MESSAGES
+===================================== */
 
 .profile-message {
-  margin-top: 25px;
-
+  margin-top: 22px;
   padding: 12px 15px;
 
-  border-radius: 10px;
+  border-radius: 8px;
 
   display: flex;
-  align-items: center;
-
+  align-items: flex-start;
   gap: 9px;
 
-  font-size: 11px;
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
 }
-
 
 .profile-message.success {
   color: #00e6a7;
-
-  background:
-    rgba(0, 230, 167, 0.08);
-
-  border:
-    1px solid
-    rgba(0, 230, 167, 0.18);
+  background: rgba(0, 230, 167, 0.08);
+  border: 1px solid rgba(0, 230, 167, 0.18);
 }
-
 
 .profile-message.error {
   color: #ff7185;
-
-  background:
-    rgba(255, 113, 133, 0.08);
-
-  border:
-    1px solid
-    rgba(255, 113, 133, 0.18);
+  background: rgba(255, 113, 133, 0.08);
+  border: 1px solid rgba(255, 113, 133, 0.18);
 }
 
-
 .profile-message span {
+  flex-shrink: 0;
   font-weight: 800;
 }
 
-
-/* =========================
+/* =====================================
    FORM
-========================= */
+===================================== */
 
 .profile-form {
-  margin-top: 30px;
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
-
 
 .profile-field {
-  margin-bottom: 20px;
+  width: 100%;
+  margin-bottom: 6px;
 }
-
 
 .profile-field label {
   display: block;
-
   margin-bottom: 8px;
-
   color: #aeb6c3;
-
   font-size: 11px;
-
   font-weight: 600;
 }
 
-
-/* DISPLAY MODE */
+/* Display details */
 
 .profile-display {
   width: 100%;
-
+  min-height: 48px;
   box-sizing: border-box;
-
-  min-height: 43px;
 
   display: flex;
   align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 
-  padding: 12px 13px;
+  padding: 13px 15px;
 
-  border-radius: 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 
-  border:
-    1px solid
-    rgba(255, 255, 255, 0.07);
-
-  background:
-    rgba(255, 255, 255, 0.025);
-
+  background: rgba(255, 255, 255, 0.025);
   color: #e7ebf1;
 
   font-size: 12px;
+  overflow-wrap: anywhere;
 }
 
+.profile-display span {
+  min-width: 55px;
+  color: #8c95a5;
+  font-size: 12px;
+  font-weight: 600;
+}
 
-/* EDIT MODE */
+/* Edit inputs */
 
 .profile-field input {
+  display: block;
   width: 100%;
-
+  min-height: 46px;
   box-sizing: border-box;
 
   padding: 12px 13px;
 
-  border-radius: 10px;
-
-  border:
-    1px solid
-    rgba(255, 255, 255, 0.08);
-
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   outline: none;
 
-  background:
-    rgba(255, 255, 255, 0.035);
-
+  background: rgba(255, 255, 255, 0.035);
   color: #e7ebf1;
 
   font-family: inherit;
-
   font-size: 12px;
 
   transition: 0.25s ease;
 }
 
-
 .profile-field input::placeholder {
-  color: #596475;
+  color: #697587;
 }
-
 
 .profile-field input:focus {
-  border-color:
-    rgba(0, 223, 245, 0.45);
-
-  background:
-    rgba(0, 223, 245, 0.035);
-
-  box-shadow:
-    0 0 0 3px
-    rgba(0, 223, 245, 0.06);
+  border-color: rgba(0, 223, 245, 0.45);
+  background: rgba(0, 223, 245, 0.035);
+  box-shadow: 0 0 0 3px rgba(0, 223, 245, 0.06);
 }
 
-
-/* =========================
+/* =====================================
    EDIT BUTTON
-========================= */
+===================================== */
 
 .profile-edit-button {
   width: 100%;
-
-  margin-top: 8px;
-
+  min-height: 46px;
+  margin-top: 7px;
   padding: 12px 16px;
 
-  border-radius: 10px;
-
+  border-radius: 6px;
   border: 1px solid #00dff5;
 
   background: #00dff5;
-
   color: #061016;
 
+  font-family: inherit;
   font-size: 12px;
-
   font-weight: 700;
 
   cursor: pointer;
@@ -624,182 +369,155 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
   gap: 10px;
 
   transition: 0.25s ease;
-
-  box-shadow:
-    0 0 22px
-    rgba(0, 223, 245, 0.15);
+  box-shadow: 0 0 22px rgba(0, 223, 245, 0.15);
 }
-
 
 .profile-edit-button:hover {
   transform: translateY(-2px);
-
-  box-shadow:
-    0 0 28px
-    rgba(0, 223, 245, 0.28);
+  box-shadow: 0 0 28px rgba(0, 223, 245, 0.28);
 }
 
+.profile-edit-button span,
+.profile-save-button span {
+  font-size: 17px;
+}
 
-/* =========================
-   SAVE + CANCEL
-========================= */
+/* =====================================
+   SAVE AND CANCEL
+===================================== */
 
 .profile-actions {
   display: flex;
-
   gap: 10px;
-
-  margin-top: 8px;
+  margin-top: 7px;
 }
-
 
 .profile-save-button,
 .profile-cancel-button {
+  min-height: 44px;
   padding: 12px 16px;
 
-  border-radius: 10px;
+  border-radius: 6px;
 
+  font-family: inherit;
   font-size: 12px;
-
   font-weight: 700;
 
   cursor: pointer;
-
   transition: 0.25s ease;
 }
-
 
 .profile-save-button {
   flex: 1;
 
-  border:
-    1px solid #00dff5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 
+  border: 1px solid #00dff5;
   background: #00dff5;
-
   color: #061016;
 
-  box-shadow:
-    0 0 22px
-    rgba(0, 223, 245, 0.15);
+  box-shadow: 0 0 22px rgba(0, 223, 245, 0.15);
 }
 
-
-.profile-save-button:hover {
+.profile-save-button:hover:not(:disabled) {
   transform: translateY(-2px);
-
-  box-shadow:
-    0 0 28px
-    rgba(0, 223, 245, 0.28);
+  box-shadow: 0 0 28px rgba(0, 223, 245, 0.28);
 }
-
 
 .profile-cancel-button {
-  border:
-    1px solid
-    rgba(255, 255, 255, 0.10);
+  min-width: 100px;
 
-  background:
-    rgba(255, 255, 255, 0.035);
-
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.035);
   color: #dce2ea;
 }
 
-
-.profile-cancel-button:hover {
-  border-color:
-    rgba(255, 113, 133, 0.30);
-
+.profile-cancel-button:hover:not(:disabled) {
+  border-color: rgba(255, 113, 133, 0.30);
   color: #ff7185;
 }
-
 
 .profile-save-button:disabled,
 .profile-cancel-button:disabled {
   opacity: 0.55;
-
   cursor: not-allowed;
 }
 
-
-/* =========================
-   BACK BUTTON
-========================= */
+/* =====================================
+   BACK TO DASHBOARD
+===================================== */
 
 .profile-back {
-  margin-top: 24px;
+  width: 100%;
+  margin-top: 23px;
+  padding: 17px 0 0;
 
   border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
 
   background: transparent;
-
   color: #00dff5;
 
+  font-family: inherit;
   font-size: 11px;
-
   font-weight: 700;
+  text-align: left;
 
   cursor: pointer;
-
   transition: 0.25s ease;
 }
 
-
 .profile-back:hover {
-  text-decoration: underline;
+  color: #70f0ff;
 }
 
-
-/* =========================
+/* =====================================
    FOOTER
-========================= */
+===================================== */
 
 .profile-footer {
-  margin: 0 auto 35px;
-
-  text-align: center;
+  margin: 0;
+  padding: 0 15px 25px;
 
   color: #596475;
+  text-align: center;
 
   font-size: 10px;
-
   letter-spacing: 0.5px;
+  line-height: 1.8;
 
   position: relative;
-
   z-index: 2;
 }
 
-
-/* =========================
+/* =====================================
    LOADING
-========================= */
+===================================== */
 
 .profile-loading {
   min-height: 100vh;
 
   display: flex;
-
   flex-direction: column;
-
   align-items: center;
-
   justify-content: center;
 
-  color: #7e8998;
+  position: relative;
+  z-index: 1;
 
+  color: #7e8998;
   font-size: 12px;
 }
-
 
 .profile-loading-logo {
   width: 55px;
   height: 55px;
-
   margin-bottom: 18px;
 
   display: flex;
@@ -807,87 +525,90 @@
   justify-content: center;
 
   border-radius: 15px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #00dff5,
-      #7d41ff
-    );
+  background: linear-gradient(135deg, #00dff5, #7d41ff);
 
   color: #ffffff;
-
   font-size: 15px;
-
   font-weight: 800;
 
-  box-shadow:
-    0 0 30px
-    rgba(0, 223, 245, 0.22);
+  box-shadow: 0 0 30px rgba(0, 223, 245, 0.22);
 }
-
 
 .profile-loading p {
   color: #7e8998;
-
   font-size: 12px;
 }
 
-
-/* =========================
-   RESPONSIVE
-========================= */
+/* =====================================
+   TABLET
+===================================== */
 
 @media (max-width: 950px) {
-
-  .profile-header {
-    padding: 0 4%;
-  }
-
-  .profile-nav {
+  .profile-page .dashboard-nav {
     display: none;
   }
 
   .profile-main {
-    width: 92%;
+    padding: 35px 20px;
   }
-
 }
 
+/* =====================================
+   MOBILE
+===================================== */
 
 @media (max-width: 650px) {
-
-  .profile-header {
+  .profile-page .dashboard-navbar {
     height: 68px;
+    padding: 0 4%;
   }
 
-  .profile-brand p {
-    display: none;
+  .profile-page .brand-area {
+    min-width: 0;
+    gap: 9px;
   }
 
-  .profile-brand h2 {
-    font-size: 16px;
-  }
-
-  .profile-brand-icon {
+  .profile-page .brand-logo {
     width: 36px;
     height: 36px;
   }
 
-  .profile-logout {
+  .profile-page .brand-name {
+    font-size: 16px;
+  }
+
+  .profile-page .brand-tagline {
+    display: none;
+  }
+
+  .profile-page .nav-right {
+    gap: 10px;
+  }
+
+  .profile-page .profile-circle {
+    width: 37px;
+    height: 37px;
+    border-radius: 9px;
+  }
+
+  .profile-page .logout-link {
     display: none;
   }
 
   .profile-main {
-    padding-top: 38px;
+    min-height: auto;
+    padding: 35px 18px;
   }
 
   .profile-card {
-    padding: 27px 23px;
+    max-width: 100%;
+    min-height: auto;
+    padding: 27px 22px;
+    border-radius: 6px;
   }
 
   .profile-card h1 {
-    font-size: 32px;
+    font-size: 30px;
   }
 
   .profile-actions {
@@ -899,26 +620,46 @@
     width: 100%;
   }
 
+  .profile-footer {
+    padding-bottom: 22px;
+  }
 }
 
+/* =====================================
+   SMALL MOBILE
+===================================== */
 
-@media (max-width: 420px) {
-
+@media (max-width: 380px) {
   .profile-main {
-    width: 94%;
+    padding: 28px 13px;
   }
 
   .profile-card {
-    padding: 23px 19px;
+    padding: 23px 17px;
   }
 
   .profile-card h1 {
-    font-size: 29px;
+    font-size: 27px;
   }
 
-  .profile-card-icon {
-    width: 44px;
-    height: 44px;
+  .profile-display {
+    gap: 8px;
+    padding: 12px;
   }
 
+  .profile-display span {
+    min-width: 48px;
+  }
+}
+
+/* =====================================
+   ACCESSIBILITY
+===================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-page *,
+  .profile-page *::before,
+  .profile-page *::after {
+    transition: none !important;
+  }
 }
