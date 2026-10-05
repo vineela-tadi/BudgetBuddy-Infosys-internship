@@ -1,8 +1,7 @@
-
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Dashboard.css";
 import "./Notifications.css";
+import "./Dashboard.css";
 
 const API_URL = "http://127.0.0.1:8000";
 
@@ -23,6 +22,8 @@ function Notifications() {
     localStorage.removeItem("token");
     localStorage.removeItem("access_token");
     localStorage.removeItem("authToken");
+    localStorage.removeItem("user");
+
     navigate("/login");
   };
 
@@ -36,6 +37,7 @@ function Notifications() {
 
     try {
       setLoading(true);
+      setError("");
 
       const response = await fetch(`${API_URL}/notifications/`, {
         headers: {
@@ -55,7 +57,6 @@ function Notifications() {
       const data = await response.json();
 
       setNotifications(Array.isArray(data) ? data : []);
-      setError("");
     } catch (err) {
       setError(err.message || "Something went wrong.");
     } finally {
@@ -67,55 +68,89 @@ function Notifications() {
     fetchNotifications();
   }, [fetchNotifications]);
 
+  // ================= MARK SINGLE NOTIFICATION AS READ =================
+
   const markAsRead = async (id) => {
     try {
       setUpdating(true);
       setError("");
+
+      const token = getToken();
+
+      if (!token) {
+        navigate("/login");
+        return;
+      }
 
       const response = await fetch(
         `${API_URL}/notifications/${id}/read`,
         {
           method: "PATCH",
           headers: {
-            Authorization: `Bearer ${getToken()}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
+      const data = await response.json().catch(() => null);
+
       if (!response.ok) {
-        throw new Error("Unable to update notification.");
+        throw new Error(
+          data?.detail || "Unable to update notification."
+        );
       }
 
       await fetchNotifications();
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Unable to update notification.");
     } finally {
       setUpdating(false);
     }
   };
+
+  // ================= MARK ALL NOTIFICATIONS AS READ =================
 
   const markAllAsRead = async () => {
     try {
       setUpdating(true);
       setError("");
 
-      const response = await fetch(
-        `${API_URL}/notifications/read-all`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-          },
-        }
+      const token = getToken();
+
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      const unreadNotifications = notifications.filter(
+        (notification) => !notification.is_read
       );
 
-      if (!response.ok) {
-        throw new Error("Unable to update notifications.");
+      for (const notification of unreadNotifications) {
+        const response = await fetch(
+          `${API_URL}/notifications/${notification.id}/read`,
+          {
+            method: "PATCH",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          throw new Error(
+            data?.detail || "Unable to update notifications."
+          );
+        }
       }
 
       await fetchNotifications();
     } catch (err) {
-      setError(err.message);
+      setError(
+        err.message || "Unable to update notifications."
+      );
     } finally {
       setUpdating(false);
     }
@@ -127,30 +162,35 @@ function Notifications() {
 
   return (
     <div className="notifications-page">
-      {/* Navbar */}
+
+      {/* ================= NAVBAR ================= */}
+
       <header className="dashboard-navbar">
-        <div
-          className="brand-area"
-          role="button"
-          tabIndex={0}
-          onClick={() => navigate("/dashboard")}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              navigate("/dashboard");
-            }
-          }}
-        >
-          <div className="brand-logo">BB</div>
+
+        <div className="brand-area">
+
+          <div
+            className="brand-logo"
+            onClick={() => navigate("/dashboard")}
+            style={{ cursor: "pointer" }}
+          >
+            BB
+          </div>
 
           <div>
-            <div className="brand-name">BudgetBuddy</div>
+            <div className="brand-name">
+              BudgetBuddy
+            </div>
+
             <div className="brand-tagline">
               Money, made simple.
             </div>
           </div>
+
         </div>
 
         <nav className="dashboard-nav">
+
           <button
             className="nav-item"
             onClick={() => navigate("/dashboard")}
@@ -181,16 +221,21 @@ function Notifications() {
 
           <button
             className="nav-item"
+            onClick={() => navigate("/savings-goals")}
+          >
+            Savings
+          </button>
+
+          <button
+            className="nav-item"
             onClick={() => navigate("/analytics")}
           >
             Analytics
           </button>
 
-          <button
-            className="nav-item active"
-            onClick={() => navigate("/notifications")}
-          >
+          <button className="nav-item active">
             Notifications
+
             {unreadCount > 0 && (
               <span className="nav-notification-count">
                 {unreadCount > 99 ? "99+" : unreadCount}
@@ -204,9 +249,11 @@ function Notifications() {
           >
             Reports
           </button>
+
         </nav>
 
         <div className="nav-right">
+
           <button
             className="profile-circle"
             onClick={() => navigate("/profile")}
@@ -221,13 +268,21 @@ function Notifications() {
           >
             Logout
           </button>
+
         </div>
+
       </header>
 
-      {/* Main Content */}
+      {/* ================= MAIN CONTENT ================= */}
+
       <main className="notifications-content">
+
+        {/* ================= HEADING ================= */}
+
         <section className="notifications-heading">
+
           <div>
+
             <p className="notifications-eyebrow">
               STAY UPDATED
             </p>
@@ -239,27 +294,42 @@ function Notifications() {
             <p className="notifications-subtitle">
               Stay informed about your budget activity and updates.
             </p>
+
           </div>
 
           <div className="notification-count">
-            <span>{unreadCount}</span>
-            <small>Unread</small>
+
+            <span>
+              {unreadCount}
+            </span>
+
+            <small>
+              Unread
+            </small>
+
           </div>
+
         </section>
 
-        {/* Notification Toolbar */}
+        {/* ================= TOOLBAR ================= */}
+
         <section className="notification-toolbar">
+
           <div>
+
             <p className="section-label">
               YOUR ACTIVITY
             </p>
 
-            <h2>Your notifications</h2>
+            <h2>
+              Your notifications
+            </h2>
 
             <p className="notification-total">
               {notifications.length} notification
               {notifications.length !== 1 ? "s" : ""}
             </p>
+
           </div>
 
           <button
@@ -267,14 +337,21 @@ function Notifications() {
             onClick={markAllAsRead}
             disabled={updating || unreadCount === 0}
           >
-            {updating ? "Updating..." : "Mark all as read"}
+            {updating
+              ? "Updating..."
+              : "Mark all as read"}
           </button>
+
         </section>
 
-        {/* Error Message */}
+        {/* ================= ERROR ================= */}
+
         {error && (
           <div className="notification-error">
-            <span>{error}</span>
+
+            <span>
+              {error}
+            </span>
 
             <button
               onClick={() => {
@@ -289,29 +366,52 @@ function Notifications() {
                 ? "Login"
                 : "Try again"}
             </button>
+
           </div>
         )}
 
-        {/* Notifications List */}
+        {/* ================= NOTIFICATIONS LIST ================= */}
+
         <section className="notification-list">
+
           {loading ? (
+
             <div className="notification-empty">
+
               <div className="notification-loader" />
-              <h3>Loading notifications...</h3>
-              <p>Please wait a moment.</p>
+
+              <h3>
+                Loading notifications...
+              </h3>
+
+              <p>
+                Please wait a moment.
+              </p>
+
             </div>
+
           ) : notifications.length === 0 && !error ? (
+
             <div className="notification-empty">
+
               <div className="notification-empty-icon">
                 ✓
               </div>
 
-              <h3>You're all caught up!</h3>
+              <h3>
+                You're all caught up!
+              </h3>
 
-              <p>No notifications yet.</p>
+              <p>
+                No notifications yet.
+              </p>
+
             </div>
+
           ) : (
+
             notifications.map((item) => (
+
               <article
                 key={item.id}
                 className={`notification-card ${
@@ -320,6 +420,7 @@ function Notifications() {
                     : "notification-unread"
                 }`}
               >
+
                 <div
                   className={`notification-icon ${
                     item.is_read
@@ -331,19 +432,26 @@ function Notifications() {
                 </div>
 
                 <div className="notification-details">
+
                   <div className="notification-title-row">
+
                     <h3>
-                      {item.title || "BudgetBuddy Notification"}
+                      {item.title ||
+                        "BudgetBuddy Notification"}
                     </h3>
 
                     {!item.is_read && (
                       <span className="unread-dot" />
                     )}
+
                   </div>
 
-                  <p>{item.message}</p>
+                  <p>
+                    {item.message}
+                  </p>
 
                   <div className="notification-meta">
+
                     <span>
                       {item.created_at
                         ? new Date(
@@ -357,28 +465,45 @@ function Notifications() {
                         ✓ Read
                       </span>
                     )}
+
                   </div>
+
                 </div>
 
                 {!item.is_read && (
+
                   <button
                     className="mark-read-button"
-                    onClick={() => markAsRead(item.id)}
+                    onClick={() =>
+                      markAsRead(item.id)
+                    }
                     disabled={updating}
                   >
                     Mark as read
                   </button>
+
                 )}
+
               </article>
+
             ))
+
           )}
+
         </section>
 
+        {/* ================= FOOTER ================= */}
+
         <footer className="notifications-footer">
+
           <span className="footer-status-dot" />
+
           BudgetBuddy · Your finances, organized.
+
         </footer>
+
       </main>
+
     </div>
   );
 }

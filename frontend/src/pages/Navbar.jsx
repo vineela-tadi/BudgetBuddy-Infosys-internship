@@ -7,6 +7,7 @@ const navItems = [
   { label: "Income", path: "/income" },
   { label: "Expenses", path: "/expenses" },
   { label: "Budgets", path: "/budget" },
+  { label: "Savings", path: "/savings-goals" },
   { label: "Analytics", path: "/analytics" },
   { label: "Notifications", path: "/notifications" },
   { label: "Reports", path: "/reports" },

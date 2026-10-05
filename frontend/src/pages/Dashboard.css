@@ -1255,3 +1255,19 @@ html {
 .nav-item {
   transform: none;
 }
+/* Smooth page transition */
+.dashboard-page {
+  animation: pageFadeIn 0.35s ease-in-out;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

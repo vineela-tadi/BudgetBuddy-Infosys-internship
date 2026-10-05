@@ -151,14 +151,15 @@ function Analytics() {
 
         <nav className="dashboard-nav">
           {[
-            ["Overview", "/dashboard"],
-            ["Income", "/income"],
-            ["Expenses", "/expenses"],
-            ["Budgets", "/budget"],
-            ["Analytics", "/analytics"],
-            ["Notifications", "/notifications"],
-            ["Reports", "/reports"],
-          ].map(([label, path]) => (
+  ["Overview", "/dashboard"],
+  ["Income", "/income"],
+  ["Expenses", "/expenses"],
+  ["Budgets", "/budget"],
+  ["Savings", "/savings-goals"],
+  ["Analytics", "/analytics"],
+  ["Notifications", "/notifications"],
+  ["Reports", "/reports"],
+].map(([label, path]) => (
             <button
               key={path}
               className={`nav-item ${

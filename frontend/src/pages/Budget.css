@@ -1,1162 +1,814 @@
-* {
-  box-sizing: border-box;
-}
+/* =========================================
+   BUDGET PAGE
+========================================= */
 
 .budget-page {
   min-height: 100vh;
-  width: 100%;
 
   background:
     radial-gradient(
-      circle at 10% 15%,
-      rgba(0, 223, 245, 0.08),
-      transparent 28%
+      circle at 15% 20%,
+      rgba(0, 180, 255, 0.08),
+      transparent 30%
     ),
     radial-gradient(
-      circle at 90% 35%,
-      rgba(125, 65, 255, 0.08),
-      transparent 28%
+      circle at 85% 25%,
+      rgba(110, 70, 255, 0.08),
+      transparent 30%
     ),
-    #080b12;
-
-  color: #f5f8fc;
-
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-}
-
-/* =========================================
-   HEADER - SAME DASHBOARD STYLE
-========================================= */
-
-.budget-header {
-  height: 76px;
-  width: 100%;
-  padding: 0 5%;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  gap: 30px;
-
-  background: rgba(8, 11, 18, 0.82);
-
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-/* BRAND */
-
-.budget-brand-area {
-  display: flex;
-  align-items: center;
-
-  gap: 12px;
-
-  min-width: 190px;
-
-  cursor: pointer;
-}
-
-.budget-brand-logo {
-  width: 40px;
-  height: 40px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 11px;
-
-  background: linear-gradient(
-    135deg,
-    #00dff5,
-    #7d41ff
-  );
+    #070b14;
 
   color: #ffffff;
-
-  font-size: 14px;
-  font-weight: 800;
-
-  box-shadow:
-    0 0 20px rgba(0, 223, 245, 0.22);
 }
 
-.budget-brand-name {
-  font-size: 18px;
-  font-weight: 700;
-
-  letter-spacing: -0.4px;
-
-  color: #f5f8fc;
-}
-
-/* SAME DASHBOARD QUOTATION */
-
-.budget-brand-tagline {
-  margin-top: 2px;
-
-  color: #70798a;
-
-  font-size: 10px;
-
-  letter-spacing: 1.3px;
-
-  text-transform: uppercase;
-}
-
-/* NAVIGATION */
-
-.budget-nav {
-  display: flex;
-  align-items: center;
-
-  gap: 6px;
-}
-
-.budget-nav-item {
-  border: 0;
-  background: transparent;
-
-  color: #8c95a5;
-
-  padding: 10px 15px;
-
-  border-radius: 9px;
-
-  font-size: 13px;
-  font-weight: 600;
-
-  cursor: pointer;
-
-  transition: 0.25s ease;
-}
-
-.budget-nav-item:hover {
-  color: #fff;
-
-  background: rgba(
-    0,
-    223,
-    245,
-    0.07
-  );
-}
-
-.budget-nav-item.active {
-  color: #00dff5;
-
-  background: rgba(
-    0,
-    223,
-    245,
-    0.09
-  );
-
-  box-shadow:
-    inset 0 0 0 1px
-    rgba(0, 223, 245, 0.13);
-}
-
-/* RIGHT */
-
-.budget-nav-right {
-  display: flex;
-  align-items: center;
-
-  gap: 14px;
-}
-
-.budget-profile-circle {
-  width: 37px;
-  height: 37px;
-
-  border-radius: 50%;
-
-  border: 1px solid
-    rgba(0, 223, 245, 0.25);
-
-  background: linear-gradient(
-    135deg,
-    rgba(0, 223, 245, 0.12),
-    rgba(125, 65, 255, 0.13)
-  );
-
-  color: #00dff5;
-
-  font-size: 11px;
-  font-weight: 700;
-
-  cursor: pointer;
-
-  transition: 0.25s ease;
-}
-
-.budget-logout-link {
-  border: 0;
-  background: transparent;
-
-  color: #858e9e;
-
-  font-size: 13px;
-  font-weight: 600;
-
-  cursor: pointer;
-
-  transition: 0.25s ease;
-}
-
-.budget-logout-link:hover {
-  color: #ff6b81;
-}
 
 /* =========================================
-   MAIN
+   MAIN CONTENT
+   Navbar styles are handled by Dashboard.css
 ========================================= */
 
-.budget-container {
-  width: min(1180px, 90%);
-
+.budget-content {
+  width: min(1180px, 92%);
   margin: 0 auto;
-
-  padding: 70px 0 60px;
+  padding: 55px 0 80px;
 }
 
-/* HEADING */
 
-.budget-heading {
-  display: flex;
+/* =========================================
+   HERO
+========================================= */
 
-  justify-content: space-between;
-
-  align-items: flex-end;
-
-  gap: 40px;
-
-  margin-bottom: 50px;
+.budget-hero {
+  text-align: center;
+  margin-bottom: 45px;
 }
 
 .budget-eyebrow {
-  color: #70798a;
+  margin: 0 0 10px;
 
-  font-size: 10px;
+  color: #79a7d8;
 
-  letter-spacing: 2px;
+  font-size: 13px;
+  font-weight: 600;
 
-  font-weight: 700;
+  letter-spacing: 0.3px;
 }
 
-.budget-heading h1 {
-  margin: 12px 0 15px;
-
-  font-size: clamp(
-    42px,
-    6vw,
-    72px
-  );
-
-  line-height: 0.95;
-
-  letter-spacing: -3px;
-
-  font-weight: 700;
-}
-
-.budget-heading h1 span {
-  color: #00dff5;
-}
-
-.budget-heading p {
-  max-width: 500px;
-
+.budget-hero h1 {
   margin: 0;
 
-  color: #7f8999;
+  font-size: clamp(38px, 5vw, 58px);
+  line-height: 1.05;
+
+  font-weight: 800;
+
+  letter-spacing: -2px;
+
+  color: #ffffff;
+}
+
+.budget-hero p:last-child {
+  margin: 14px 0 0;
+
+  color: #8f99ad;
 
   font-size: 15px;
-
-  line-height: 1.7;
 }
 
-/* TOTAL */
-
-.total-budget-card {
-  min-width: 245px;
-
-  padding: 28px;
-
-  border-radius: 18px;
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(0, 223, 245, 0.08),
-      rgba(125, 65, 255, 0.08)
-    );
-
-  border: 1px solid
-    rgba(255, 255, 255, 0.08);
-}
-
-.total-budget-card span,
-.total-budget-card small {
-  display: block;
-
-  color: #70798a;
-
-  font-size: 11px;
-
-  letter-spacing: 1px;
-}
-
-.total-budget-card strong {
-  display: block;
-
-  margin: 8px 0;
-
-  font-size: 32px;
-
-  color: #f5f8fc;
-}
 
 /* =========================================
-   CARDS
+   CREATE BUDGET SECTION
 ========================================= */
 
-.budget-form-card,
-.budget-records {
-  background: rgba(
-    13,
-    17,
-    26,
-    0.78
-  );
+.create-budget-section {
+  width: min(850px, 100%);
 
-  border: 1px solid
-    rgba(255, 255, 255, 0.07);
-
-  border-radius: 20px;
+  margin: 0 auto 55px;
 
   padding: 30px;
 
+  box-sizing: border-box;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  border-radius: 18px;
+
+  background: rgba(15, 20, 32, 0.9);
+
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.section-heading {
+  text-align: center;
+
   margin-bottom: 28px;
 }
 
-.section-title {
-  display: flex;
+.section-heading h2 {
+  margin: 0;
 
-  align-items: center;
+  color: #ffffff;
 
-  justify-content: space-between;
-
-  margin-bottom: 28px;
-}
-
-.section-title span,
-.records-header span,
-.budget-cta span {
-  color: #70798a;
-
-  font-size: 10px;
-
-  letter-spacing: 1.8px;
-
+  font-size: 25px;
   font-weight: 700;
 }
 
-.section-title h2,
-.records-header h2 {
-  margin: 6px 0 0;
+.section-heading p {
+  margin: 8px 0 0;
 
-  font-size: 22px;
+  color: #8992a6;
 
-  color: #f5f8fc;
+  font-size: 14px;
 }
 
-.plus-icon {
-  width: 40px;
-  height: 40px;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 11px;
-
-  background: rgba(
-    0,
-    223,
-    245,
-    0.09
-  );
-
-  color: #00dff5;
-
-  font-size: 22px;
-}
 
 /* =========================================
    FORM
 ========================================= */
 
-.form-grid {
+.budget-form {
   display: grid;
 
-  grid-template-columns:
-    repeat(2, 1fr);
-
-  gap: 22px;
-}
-
-.form-group label {
-  display: block;
-
-  margin-bottom: 9px;
-
-  color: #8c95a5;
-
-  font-size: 12px;
-
-  font-weight: 600;
-}
-
-.form-group input {
-  width: 100%;
-
-  padding: 14px 15px;
-
-  border-radius: 10px;
-
-  border: 1px solid
-    rgba(255, 255, 255, 0.08);
-
-  background: rgba(
-    255,
-    255,
-    255,
-    0.035
-  );
-
-  color: #f5f8fc;
-
-  outline: none;
-
-  font-size: 13px;
-
-  transition: 0.25s ease;
-}
-
-.form-group input:focus {
-  border-color:
-    rgba(0, 223, 245, 0.45);
-
-  background: rgba(
-    0,
-    223,
-    245,
-    0.035
-  );
-}
-
-.form-group input::placeholder {
-  color: #596272;
-}
-
-.input-with-symbol {
-  display: flex;
-
-  align-items: center;
-
-  border: 1px solid
-    rgba(255, 255, 255, 0.08);
-
-  background: rgba(
-    255,
-    255,
-    255,
-    0.035
-  );
-
-  border-radius: 10px;
-
-  overflow: hidden;
-}
-
-.input-with-symbol span {
-  padding-left: 15px;
-
-  color: #00dff5;
-
-  font-weight: 700;
-}
-
-.input-with-symbol input {
-  border: 0;
-
-  background: transparent;
-
-  border-radius: 0;
-}
-
-.form-bottom {
-  margin-top: 25px;
-
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: center;
+  grid-template-columns: repeat(2, 1fr);
 
   gap: 20px;
 }
 
-.form-bottom p {
-  margin: 0;
+.form-group {
+  display: flex;
 
-  color: #626d7d;
+  flex-direction: column;
 
-  font-size: 12px;
+  gap: 8px;
 }
 
-.add-budget-button {
-  border: 0;
-
-  border-radius: 10px;
-
-  padding: 13px 20px;
-
-  background: linear-gradient(
-    135deg,
-    #00dff5,
-    #7d41ff
-  );
-
-  color: #fff;
-
-  font-size: 12px;
-
-  font-weight: 700;
-
-  cursor: pointer;
-
-  transition: 0.25s ease;
-}
-
-.add-budget-button:hover {
-  transform: translateY(-2px);
-
-  box-shadow:
-    0 10px 25px
-    rgba(0, 223, 245, 0.15);
-}
-
-.add-budget-button:disabled {
-  opacity: 0.6;
-
-  cursor: not-allowed;
-
-  transform: none;
-}
-
-/* =========================================
-   MESSAGE
-========================================= */
-
-.budget-message {
-  padding: 13px 16px;
-
-  margin-bottom: 25px;
-
-  border-radius: 10px;
+.form-group label {
+  color: #aab3c5;
 
   font-size: 13px;
 
-  display: flex;
-
-  align-items: center;
-
-  gap: 10px;
+  font-weight: 600;
 }
 
-.message-success {
-  background: rgba(
-    0,
-    223,
-    245,
-    0.07
-  );
+.form-group input,
+.form-group select {
+  width: 100%;
 
-  border: 1px solid
-    rgba(0, 223, 245, 0.15);
+  height: 46px;
 
-  color: #00dff5;
+  box-sizing: border-box;
+
+  padding: 0 14px;
+
+  border-radius: 10px;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  outline: none;
+
+  background: #101622;
+
+  color: #ffffff;
+
+  font-size: 14px;
+
+  transition: all 0.2s ease;
 }
 
-.message-error {
-  background: rgba(
-    255,
-    107,
-    129,
-    0.07
-  );
-
-  border: 1px solid
-    rgba(255, 107, 129, 0.15);
-
-  color: #ff6b81;
+.form-group input::placeholder {
+  color: #667085;
 }
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: rgba(0, 200, 255, 0.65);
+
+  box-shadow:
+    0 0 0 3px rgba(0, 200, 255, 0.08);
+}
+
+.form-group select {
+  cursor: pointer;
+}
+
 
 /* =========================================
-   RECORDS
+   AMOUNT INPUT
 ========================================= */
 
-.records-header {
-  display: flex;
+.amount-input-wrapper {
+  height: 46px;
 
-  justify-content: space-between;
+  display: flex;
 
   align-items: center;
 
-  margin-bottom: 25px;
+  box-sizing: border-box;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  border-radius: 10px;
+
+  background: #101622;
+
+  overflow: hidden;
 }
 
-.records-header button {
-  border: 0;
+.amount-input-wrapper span {
+  padding-left: 14px;
+
+  color: #aab3c5;
+
+  font-size: 14px;
+
+  font-weight: 600;
+}
+
+.amount-input-wrapper input {
+  border: none;
 
   background: transparent;
 
-  color: #858e9e;
+  box-shadow: none;
 
-  font-size: 12px;
+  height: 44px;
+}
+
+.amount-input-wrapper input:focus {
+  box-shadow: none;
+}
+
+
+/* =========================================
+   CREATE BUTTON
+========================================= */
+
+.create-budget-button {
+  grid-column: 1 / -1;
+
+  justify-self: center;
+
+  margin-top: 5px;
+
+  min-width: 160px;
+
+  height: 45px;
+
+  padding: 0 24px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: linear-gradient(
+    135deg,
+    #00c6ff,
+    #5967ff
+  );
+
+  color: #ffffff;
+
+  font-size: 14px;
+
+  font-weight: 700;
 
   cursor: pointer;
+
+  box-shadow:
+    0 8px 20px rgba(0, 160, 255, 0.18);
+
+  transition: all 0.2s ease;
 }
 
-.records-header button:hover {
-  color: #00dff5;
+.create-budget-button:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 10px 25px rgba(0, 160, 255, 0.28);
 }
 
-/* EMPTY */
 
-.budget-empty {
-  text-align: center;
+/* =========================================
+   MESSAGES
+========================================= */
 
-  padding: 55px 20px;
+.budget-success-message {
+  width: min(850px, 100%);
 
-  color: #70798a;
-}
+  box-sizing: border-box;
 
-.empty-budget-icon {
-  width: 55px;
-  height: 55px;
+  margin: -25px auto 30px;
 
-  margin: 0 auto 15px;
+  padding: 13px 16px;
 
-  display: flex;
+  border-radius: 10px;
 
-  align-items: center;
-  justify-content: center;
+  background: rgba(55, 150, 90, 0.12);
 
-  border-radius: 15px;
+  border: 1px solid rgba(80, 190, 110, 0.25);
 
-  background: rgba(
-    0,
-    223,
-    245,
-    0.07
-  );
-
-  color: #00dff5;
-
-  font-size: 20px;
-}
-
-.budget-empty h3 {
-  margin: 0 0 8px;
-
-  color: #dfe5ed;
-
-  font-size: 16px;
-}
-
-.budget-empty p {
-  margin: 0;
+  color: #8ee6a4;
 
   font-size: 13px;
+
+  text-align: center;
 }
 
-.loading-small {
-  width: 28px;
-  height: 28px;
+.budget-error-message {
+  width: min(850px, 100%);
 
-  margin: 0 auto 15px;
+  box-sizing: border-box;
 
-  border-radius: 50%;
+  margin: -25px auto 30px;
 
-  border: 2px solid
-    rgba(255, 255, 255, 0.08);
+  padding: 13px 16px;
 
-  border-top-color: #00dff5;
+  border-radius: 10px;
 
-  animation:
-    budgetSpin
-    0.8s
-    linear
-    infinite;
+  background: rgba(200, 70, 70, 0.12);
+
+  border: 1px solid rgba(220, 90, 90, 0.25);
+
+  color: #ff9a9a;
+
+  font-size: 13px;
+
+  text-align: center;
 }
 
-@keyframes budgetSpin {
-  to {
-    transform: rotate(360deg);
-  }
+
+/* =========================================
+   MY BUDGETS
+========================================= */
+
+.my-budgets-section {
+  width: 100%;
 }
 
-/* LIST */
-
-.budget-list {
+.section-heading-row {
   display: flex;
 
-  flex-direction: column;
+  align-items: flex-end;
 
-  gap: 10px;
+  justify-content: space-between;
+
+  margin-bottom: 25px;
 }
 
-.budget-row {
-  display: flex;
+.section-heading-row h2 {
+  margin: 0;
 
-  align-items: center;
+  color: #ffffff;
 
-  gap: 15px;
-
-  padding: 17px;
-
-  border-radius: 13px;
-
-  background: rgba(
-    255,
-    255,
-    255,
-    0.025
-  );
-
-  border: 1px solid
-    rgba(255, 255, 255, 0.05);
-}
-
-.budget-row-icon {
-  width: 40px;
-  height: 40px;
-
-  flex-shrink: 0;
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 11px;
-
-  background: rgba(
-    0,
-    223,
-    245,
-    0.08
-  );
-
-  color: #00dff5;
+  font-size: 27px;
 
   font-weight: 700;
 }
 
-.budget-row-info {
-  flex: 1;
+.section-heading-row p {
+  margin: 7px 0 0;
 
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 4px;
-}
-
-.budget-row-info strong {
-  color: #f0f4f8;
+  color: #8992a6;
 
   font-size: 14px;
 }
 
-.budget-row-info span {
-  color: #667181;
+.budget-count {
+  color: #00d9ff;
 
-  font-size: 11px;
-}
-
-.budget-row-amount {
-  color: #00dff5;
-
-  font-size: 16px;
+  font-size: 13px;
 
   font-weight: 700;
 
-  min-width: 100px;
+  padding: 8px 13px;
 
-  text-align: right;
+  border-radius: 20px;
+
+  background: rgba(0, 200, 255, 0.08);
+
+  border: 1px solid rgba(0, 200, 255, 0.15);
 }
 
-.budget-row-actions {
+
+/* =========================================
+   BUDGET GRID
+========================================= */
+
+.budget-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 20px;
+}
+
+
+/* =========================================
+   BUDGET CARD
+========================================= */
+
+.budget-card {
+  min-height: 235px;
+
+  padding: 25px;
+
+  box-sizing: border-box;
+
+  border-radius: 16px;
+
+  background: #101522;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.2);
+
+  transition: all 0.2s ease;
+}
+
+.budget-card:hover {
+  transform: translateY(-2px);
+
+  border-color:
+    rgba(0, 200, 255, 0.18);
+}
+
+.budget-card-top {
   display: flex;
 
-  gap: 7px;
+  justify-content: space-between;
+
+  align-items: flex-start;
 }
 
-.edit-budget,
-.delete-budget,
-.save-edit,
-.cancel-edit {
-  border: 0;
+.budget-card-top h3 {
+  margin: 0;
 
-  border-radius: 8px;
+  color: #ffffff;
 
-  padding: 8px 11px;
+  font-size: 18px;
+
+  font-weight: 700;
+
+  text-transform: capitalize;
+}
+
+.budget-card-top p {
+  margin: 7px 0 0;
+
+  color: #8f99ad;
+
+  font-size: 13px;
+}
+
+
+/* =========================================
+   AMOUNT
+========================================= */
+
+.budget-amount-label {
+  margin-top: 25px;
+
+  color: #707b91;
 
   font-size: 11px;
 
   font-weight: 600;
 
-  cursor: pointer;
+  text-transform: uppercase;
+
+  letter-spacing: 0.5px;
 }
 
-.edit-budget {
-  background: rgba(
-    0,
-    223,
-    245,
-    0.07
-  );
+.budget-amount {
+  margin-top: 6px;
 
-  color: #00dff5;
+  color: #ffffff;
+
+  font-size: 26px;
+
+  font-weight: 750;
 }
 
-.delete-budget {
-  background: rgba(
-    255,
-    107,
-    129,
-    0.07
-  );
-
-  color: #ff6b81;
-}
-
-.edit-budget:hover {
-  background: rgba(
-    0,
-    223,
-    245,
-    0.14
-  );
-}
-
-.delete-budget:hover {
-  background: rgba(
-    255,
-    107,
-    129,
-    0.14
-  );
-}
-
-/* EDIT */
-
-.budget-edit-area {
-  flex: 1;
-
-  display: flex;
-
-  gap: 10px;
-}
-
-.budget-edit-area input,
-.edit-amount input {
-  width: 100%;
-
-  padding: 10px;
-
-  border-radius: 8px;
-
-  border: 1px solid
-    rgba(255, 255, 255, 0.1);
-
-  background: rgba(
-    255,
-    255,
-    255,
-    0.04
-  );
-
-  color: #fff;
-
-  outline: none;
-}
-
-.edit-amount {
-  display: flex;
-
-  align-items: center;
-
-  min-width: 130px;
-}
-
-.edit-amount span {
-  color: #00dff5;
-
-  margin-right: 5px;
-}
-
-.budget-edit-actions {
-  display: flex;
-
-  gap: 7px;
-}
-
-.save-edit {
-  background: rgba(
-    0,
-    223,
-    245,
-    0.1
-  );
-
-  color: #00dff5;
-}
-
-.cancel-edit {
-  background: rgba(
-    255,
-    255,
-    255,
-    0.05
-  );
-
-  color: #9aa3b1;
-}
 
 /* =========================================
-   CTA
+   PROGRESS
 ========================================= */
 
-.budget-cta {
-  display: flex;
+.budget-progress {
+  margin-top: 20px;
+}
 
-  align-items: center;
+.budget-progress-header {
+  display: flex;
 
   justify-content: space-between;
 
-  gap: 30px;
+  margin-bottom: 7px;
 
-  padding: 35px;
+  color: #788398;
 
-  border-radius: 20px;
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(0, 223, 245, 0.07),
-      rgba(125, 65, 255, 0.07)
-    );
-
-  border: 1px solid
-    rgba(255, 255, 255, 0.07);
+  font-size: 11px;
 }
 
-.budget-cta h2 {
-  margin: 8px 0;
+.budget-progress-bar {
+  width: 100%;
 
-  font-size: 24px;
+  height: 6px;
 
-  color: #f5f8fc;
+  overflow: hidden;
+
+  border-radius: 10px;
+
+  background: #1d2534;
 }
 
-.budget-cta p {
-  margin: 0;
-
-  color: #70798a;
-
-  font-size: 13px;
-}
-
-.budget-cta button {
-  flex-shrink: 0;
-
-  border: 0;
-
-  padding: 13px 20px;
+.budget-progress-fill {
+  height: 100%;
 
   border-radius: 10px;
 
   background: linear-gradient(
-    135deg,
-    #00dff5,
-    #7d41ff
+    90deg,
+    #00c6ff,
+    #5967ff
   );
+}
 
-  color: #fff;
+
+/* =========================================
+   ACTION BUTTONS
+========================================= */
+
+.budget-card-actions {
+  display: flex;
+
+  gap: 10px;
+
+  margin-top: 20px;
+}
+
+.budget-card-actions button {
+  min-width: 80px;
+
+  height: 36px;
+
+  padding: 0 15px;
+
+  border-radius: 8px;
 
   font-size: 12px;
 
-  font-weight: 700;
+  font-weight: 600;
 
   cursor: pointer;
+
+  transition: all 0.2s ease;
 }
+
+
+/* =========================================
+   EDIT BUTTON
+========================================= */
+
+.edit-budget-button {
+  background: rgba(255, 255, 255, 0.06);
+
+  color: #d8deea;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.edit-budget-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+
+  color: #ffffff;
+}
+
+
+/* =========================================
+   UPDATE BUTTON
+========================================= */
+
+.update-budget-button {
+  background: linear-gradient(
+    135deg,
+    #00c6ff,
+    #5967ff
+  );
+
+  color: #ffffff;
+
+  border: none;
+}
+
+.update-budget-button:hover {
+  transform: translateY(-1px);
+}
+
+
+/* =========================================
+   CANCEL BUTTON
+========================================= */
+
+.cancel-budget-button {
+  background: transparent;
+
+  color: #aab3c5;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.cancel-budget-button:hover {
+  background: rgba(255, 255, 255, 0.06);
+
+  color: #ffffff;
+}
+
+
+/* =========================================
+   DELETE BUTTON
+========================================= */
+
+.delete-budget-button {
+  background: rgba(220, 80, 80, 0.08);
+
+  color: #ff9b9b;
+
+  border: 1px solid rgba(220, 90, 90, 0.2);
+}
+
+.delete-budget-button:hover {
+  background: rgba(220, 80, 80, 0.14);
+}
+
+
+/* =========================================
+   EDIT AREA
+========================================= */
+
+.budget-edit-area {
+  margin-top: 24px;
+}
+
+.budget-edit-area label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #8f99ad;
+
+  font-size: 12px;
+
+  font-weight: 600;
+}
+
+.budget-edit-area .budget-input-wrapper {
+  width: 100%;
+
+  height: 46px;
+
+  display: flex;
+
+  align-items: center;
+
+  box-sizing: border-box;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  border-radius: 10px;
+
+  background: #101622;
+
+  overflow: hidden;
+}
+
+.budget-input-wrapper span {
+  padding-left: 14px;
+
+  color: #aab3c5;
+
+  font-size: 14px;
+
+  font-weight: 600;
+}
+
+.budget-edit-amount {
+  width: 100%;
+
+  height: 44px;
+
+  padding: 0 14px;
+
+  box-sizing: border-box;
+
+  border: none;
+
+  outline: none;
+
+  background: transparent;
+
+  color: #ffffff;
+
+  font-size: 14px;
+}
+
+.budget-edit-amount:focus {
+  box-shadow: none;
+}
+
+
+/* =========================================
+   EMPTY / LOADING
+========================================= */
+
+.budget-loading,
+.empty-budget {
+  min-height: 180px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 16px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  background: #101522;
+
+  color: #8992a6;
+
+  font-size: 14px;
+}
+
 
 /* =========================================
    RESPONSIVE
 ========================================= */
 
-@media (max-width: 950px) {
-
-  .budget-header {
-    padding: 0 4%;
-  }
-
-  .budget-nav {
-    display: none;
-  }
-
-  .budget-nav-right {
-    margin-left: auto;
-  }
-
-  .budget-heading {
-    align-items: flex-start;
-
-    flex-direction: column;
-  }
-
-  .total-budget-card {
-    width: 100%;
+@media (max-width: 1000px) {
+  .budget-content {
+    width: 92%;
   }
 }
 
-@media (max-width: 650px) {
 
-  .budget-header {
-    height: 68px;
-  }
-
-  .budget-brand-logo {
-    width: 36px;
-    height: 36px;
-  }
-
-  .budget-brand-name {
-    font-size: 16px;
-  }
-
-  .budget-brand-tagline {
-    display: block;
-    font-size: 8px;
-    letter-spacing: 1px;
-  }
-
-  .budget-logout-link {
-    display: none;
-  }
-
-  .budget-container {
+@media (max-width: 800px) {
+  .budget-content {
     width: 92%;
 
-    padding-top: 45px;
+    padding-top: 40px;
   }
 
-  .budget-heading h1 {
-    font-size: 48px;
-
-    letter-spacing: -2px;
-  }
-
-  .budget-form-card,
-  .budget-records {
-    padding: 20px;
-
-    border-radius: 16px;
-  }
-
-  .form-grid {
+  .budget-form {
     grid-template-columns: 1fr;
   }
 
-  .form-bottom {
-    flex-direction: column;
-
-    align-items: stretch;
+  .create-budget-button {
+    grid-column: auto;
   }
 
-  .add-budget-button {
-    width: 100%;
+  .budget-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 550px) {
+  .budget-content {
+    width: 94%;
   }
 
-  .budget-row {
-    flex-wrap: wrap;
+  .budget-hero h1 {
+    font-size: 36px;
+
+    letter-spacing: -1px;
   }
 
-  .budget-row-info {
-    min-width: 0;
+  .create-budget-section {
+    padding: 22px;
   }
 
-  .budget-row-amount {
-    margin-left: auto;
-  }
-
-  .budget-row-actions {
-    width: 100%;
-  }
-
-  .budget-row-actions button {
-    flex: 1;
-  }
-
-  .budget-edit-area {
-    width: calc(100% - 55px);
-
-    flex-direction: column;
-  }
-
-  .budget-edit-actions {
-    width: 100%;
-  }
-
-  .budget-edit-actions button {
-    flex: 1;
-  }
-
-  .records-header {
+  .section-heading-row {
     align-items: flex-start;
+
+    flex-direction: column;
 
     gap: 15px;
   }
 
-  .budget-cta {
-    flex-direction: column;
-
-    align-items: flex-start;
-
-    padding: 25px;
+  .budget-card {
+    padding: 20px;
   }
 
-  .budget-cta button {
-    width: 100%;
+  .budget-card-actions {
+    flex-wrap: wrap;
+  }
+
+  .budget-card-actions button {
+    flex: 1;
   }
 }

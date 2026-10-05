@@ -362,6 +362,13 @@ export default function Income() {
           </button>
 
           <button
+  className="nav-item"
+  onClick={() => navigate("/savings-goals")}
+>
+  Savings
+</button>
+
+          <button
             className="income-nav-item"
             onClick={() => navigate("/analytics")}
           >

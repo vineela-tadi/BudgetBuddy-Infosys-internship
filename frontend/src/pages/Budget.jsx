@@ -1,60 +1,128 @@
-
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Budget.css";
 import "./Dashboard.css";
 
 const API_URL = "http://127.0.0.1:8000";
 
+function getToken() {
+  return (
+    localStorage.getItem("token") ||
+    localStorage.getItem("access_token") ||
+    localStorage.getItem("authToken")
+  );
+}
+
 function Budget() {
   const navigate = useNavigate();
 
+  const currentDate = new Date();
+
   const [budgets, setBudgets] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const [month, setMonth] = useState(currentDate.getMonth() + 1);
+  const [year, setYear] = useState(currentDate.getFullYear());
   const [category, setCategory] = useState("");
   const [allocatedAmount, setAllocatedAmount] = useState("");
 
-  const [editingId, setEditingId] = useState(null);
-  const [editCategory, setEditCategory] = useState("");
+  const [editingBudgetId, setEditingBudgetId] = useState(null);
   const [editAmount, setEditAmount] = useState("");
 
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [deletingId, setDeletingId] = useState(null);
-
   const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState("");
+  const [error, setError] = useState("");
 
-  const getToken = () =>
-    localStorage.getItem("token") ||
-    localStorage.getItem("access_token") ||
-    localStorage.getItem("authToken");
+  const categories = [
+    "Food",
+    "Transport",
+    "Entertainment",
+    "Shopping",
+    "Bills",
+    "Healthcare",
+    "Education",
+    "Other",
+  ];
 
-  const clearAuth = () => {
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  /* =========================================
+     LOGOUT
+  ========================================= */
+
+  const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("access_token");
     localStorage.removeItem("authToken");
+    localStorage.removeItem("user");
+
+    navigate("/login");
   };
 
-  const showMessage = (text, type = "success") => {
-    setMessage(text);
-    setMessageType(type);
+  /* =========================================
+     ERROR MESSAGE HANDLER
+  ========================================= */
 
-    setTimeout(() => {
-      setMessage("");
-      setMessageType("");
-    }, 3000);
-  };
-
-  // FETCH BUDGETS
-  const fetchBudgets = async () => {
-    const token = getToken();
-
-    if (!token) {
-      navigate("/login");
-      return;
+  const getErrorMessage = (data, defaultMessage) => {
+    if (!data) {
+      return defaultMessage;
     }
 
+    if (typeof data.detail === "string") {
+      return data.detail;
+    }
+
+    if (Array.isArray(data.detail)) {
+      return data.detail
+        .map((item) => {
+          if (typeof item === "string") {
+            return item;
+          }
+
+          if (item && typeof item.msg === "string") {
+            return item.msg;
+          }
+
+          return JSON.stringify(item);
+        })
+        .join(", ");
+    }
+
+    if (typeof data.message === "string") {
+      return data.message;
+    }
+
+    return defaultMessage;
+  };
+
+  /* =========================================
+     FETCH BUDGETS
+  ========================================= */
+
+  const fetchBudgets = async () => {
     try {
+      setLoading(true);
+      setError("");
+
+      const token = getToken();
+
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
       const response = await fetch(`${API_URL}/budget/`, {
         method: "GET",
         headers: {
@@ -63,23 +131,29 @@ function Budget() {
       });
 
       if (response.status === 401) {
-        clearAuth();
-        navigate("/login");
+        handleLogout();
         return;
       }
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error("Unable to load budgets");
+        throw new Error(
+          getErrorMessage(data, "Failed to fetch budgets.")
+        );
       }
 
-      const data = await response.json();
-      setBudgets(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Fetch budget error:", error);
-      showMessage(
-        error.message || "Unable to load budgets",
-        "error"
-      );
+      if (Array.isArray(data)) {
+        setBudgets(data);
+      } else if (data && Array.isArray(data.budgets)) {
+        setBudgets(data.budgets);
+      } else {
+        setBudgets([]);
+      }
+    } catch (err) {
+      console.error("Fetch budgets error:", err);
+      setError(err.message || "Unable to load budgets.");
+      setBudgets([]);
     } finally {
       setLoading(false);
     }
@@ -89,35 +163,34 @@ function Budget() {
     fetchBudgets();
   }, []);
 
-  // ADD BUDGET
-  const handleAddBudget = async (e) => {
+  /* =========================================
+     CREATE BUDGET
+  ========================================= */
+
+  const handleCreateBudget = async (e) => {
     e.preventDefault();
 
-    const token = getToken();
+    setMessage("");
+    setError("");
 
-    if (!token) {
-      navigate("/login");
+    if (!category) {
+      setError("Please select a category.");
       return;
     }
 
-    if (!category.trim()) {
-      showMessage("Please enter a category", "error");
+    if (!allocatedAmount || Number(allocatedAmount) <= 0) {
+      setError("Please enter a valid allocated amount.");
       return;
     }
-
-    if (
-      !Number.isFinite(Number(allocatedAmount)) ||
-      Number(allocatedAmount) <= 0
-    ) {
-      showMessage("Amount must be greater than 0", "error");
-      return;
-    }
-
-    setSaving(true);
-
-    const currentDate = new Date();
 
     try {
+      const token = getToken();
+
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
       const response = await fetch(`${API_URL}/budget/`, {
         method: "POST",
         headers: {
@@ -125,83 +198,92 @@ function Budget() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          month: currentDate.getMonth() + 1,
-          year: currentDate.getFullYear(),
-          category: category.trim(),
+          month: Number(month),
+          year: Number(year),
+          category: category,
           allocated_amount: Number(allocatedAmount),
         }),
       });
 
-      const data = await response.json().catch(() => ({}));
+      const data = await response.json();
 
       if (response.status === 401) {
-        clearAuth();
-        navigate("/login");
+        handleLogout();
         return;
       }
 
       if (!response.ok) {
-        throw new Error(data.detail || "Failed to add budget");
+        throw new Error(
+          getErrorMessage(data, "Failed to create budget.")
+        );
       }
 
-      showMessage("Budget added successfully!", "success");
+      setMessage("Budget created successfully!");
+
       setCategory("");
       setAllocatedAmount("");
 
       await fetchBudgets();
-    } catch (error) {
-      console.error("Add budget error:", error);
-      showMessage(
-        error.message || "Failed to add budget",
-        "error"
-      );
-    } finally {
-      setSaving(false);
+    } catch (err) {
+      console.error("Create budget error:", err);
+      setError(err.message || "Failed to create budget.");
     }
   };
 
-  // START EDITING
-  const startEdit = (budget) => {
-    setEditingId(budget.id);
-    setEditCategory(budget.category || "");
-    setEditAmount(String(budget.allocated_amount ?? ""));
+  /* =========================================
+     EDIT
+  ========================================= */
+
+  const handleEdit = (budget) => {
     setMessage("");
+    setError("");
+
+    setEditingBudgetId(budget.id);
+    setEditAmount(budget.allocated_amount);
   };
 
-  // CANCEL EDITING
-  const cancelEdit = () => {
-    setEditingId(null);
-    setEditCategory("");
+  /* =========================================
+     CANCEL EDIT
+  ========================================= */
+
+  const handleCancelEdit = () => {
+    setEditingBudgetId(null);
     setEditAmount("");
+
+    setMessage("");
+    setError("");
   };
 
-  // UPDATE BUDGET
+  /* =========================================
+     UPDATE BUDGET
+  ========================================= */
+
   const handleUpdateBudget = async (budgetId) => {
-    const token = getToken();
+    setMessage("");
+    setError("");
 
-    if (!token) {
-      navigate("/login");
+    if (!editAmount || Number(editAmount) <= 0) {
+      setError("Please enter a valid allocated amount.");
       return;
     }
-
-    if (!editCategory.trim()) {
-      showMessage("Please enter a category", "error");
-      return;
-    }
-
-    if (
-      !Number.isFinite(Number(editAmount)) ||
-      Number(editAmount) <= 0
-    ) {
-      showMessage("Amount must be greater than 0", "error");
-      return;
-    }
-
-    setSaving(true);
-
-    const currentDate = new Date();
 
     try {
+      const token = getToken();
+
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      const currentBudget = budgets.find(
+        (budget) => budget.id === budgetId
+      );
+
+      if (!currentBudget) {
+        setError("Budget not found.");
+        return;
+      }
+
       const response = await fetch(
         `${API_URL}/budget/${budgetId}`,
         {
@@ -211,61 +293,63 @@ function Budget() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            month: currentDate.getMonth() + 1,
-            year: currentDate.getFullYear(),
-            category: editCategory.trim(),
+            month: Number(currentBudget.month),
+            year: Number(currentBudget.year),
+            category: currentBudget.category,
             allocated_amount: Number(editAmount),
           }),
         }
       );
 
-      const data = await response.json().catch(() => ({}));
+      const data = await response.json();
 
       if (response.status === 401) {
-        clearAuth();
-        navigate("/login");
+        handleLogout();
         return;
       }
 
       if (!response.ok) {
         throw new Error(
-          data.detail || "Failed to update budget"
+          getErrorMessage(data, "Failed to update budget.")
         );
       }
 
-      showMessage("Budget updated successfully!", "success");
-      cancelEdit();
+      setMessage("Budget updated successfully!");
+
+      setEditingBudgetId(null);
+      setEditAmount("");
 
       await fetchBudgets();
-    } catch (error) {
-      console.error("Update budget error:", error);
-      showMessage(
-        error.message || "Failed to update budget",
-        "error"
-      );
-    } finally {
-      setSaving(false);
+    } catch (err) {
+      console.error("Update budget error:", err);
+      setError(err.message || "Failed to update budget.");
     }
   };
 
-  // DELETE BUDGET
+  /* =========================================
+     DELETE BUDGET
+  ========================================= */
+
   const handleDeleteBudget = async (budgetId) => {
+    setMessage("");
+    setError("");
+
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this budget?"
     );
 
-    if (!confirmDelete) return;
-
-    const token = getToken();
-
-    if (!token) {
-      navigate("/login");
+    if (!confirmDelete) {
       return;
     }
 
-    setDeletingId(budgetId);
-
     try {
+      const token = getToken();
+
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
       const response = await fetch(
         `${API_URL}/budget/${budgetId}`,
         {
@@ -276,73 +360,73 @@ function Budget() {
         }
       );
 
+      const data = await response.json();
+
       if (response.status === 401) {
-        clearAuth();
-        navigate("/login");
+        handleLogout();
         return;
       }
 
       if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
         throw new Error(
-          data.detail || "Failed to delete budget"
+          getErrorMessage(data, "Failed to delete budget.")
         );
       }
 
-      if (editingId === budgetId) {
-        cancelEdit();
-      }
+      setMessage("Budget deleted successfully!");
 
-      showMessage("Budget deleted successfully!", "success");
       await fetchBudgets();
-    } catch (error) {
-      console.error("Delete budget error:", error);
-      showMessage(
-        error.message || "Failed to delete budget",
-        "error"
-      );
-    } finally {
-      setDeletingId(null);
+    } catch (err) {
+      console.error("Delete budget error:", err);
+      setError(err.message || "Failed to delete budget.");
     }
   };
 
-  // TOTAL BUDGET
-  const totalBudget = useMemo(() => {
-    return budgets.reduce(
-      (sum, item) =>
-        sum + Number(item.allocated_amount || 0),
-      0
-    );
-  }, [budgets]);
+  /* =========================================
+     HELPERS
+  ========================================= */
 
-  // LOGOUT
-  const handleLogout = () => {
-    clearAuth();
-    navigate("/login");
+  const getMonthName = (monthNumber) => {
+    return months[Number(monthNumber) - 1] || "Unknown";
   };
+
+  const formatAmount = (amount) => {
+    return Number(amount || 0).toLocaleString("en-IN");
+  };
+
+  /* =========================================
+     PAGE
+  ========================================= */
 
   return (
     <div className="budget-page">
-      {/* SAME NAVBAR STRUCTURE AS DASHBOARD */}
+
+      {/* =====================================
+          EXACT SAME DASHBOARD NAVBAR
+      ===================================== */}
+
       <header className="dashboard-navbar">
+
         <div className="brand-area">
-          <div
-            className="brand-logo"
-            onClick={() => navigate("/dashboard")}
-            style={{ cursor: "pointer" }}
-          >
+
+          <div className="brand-logo">
             BB
           </div>
 
           <div>
-            <div className="brand-name">BudgetBuddy</div>
+            <div className="brand-name">
+              BudgetBuddy
+            </div>
+
             <div className="brand-tagline">
               Money, made simple.
             </div>
           </div>
+
         </div>
 
         <nav className="dashboard-nav">
+
           <button
             className="nav-item"
             onClick={() => navigate("/dashboard")}
@@ -364,8 +448,18 @@ function Budget() {
             Expenses
           </button>
 
-          <button className="nav-item active">
+          <button
+            className="nav-item active"
+            onClick={() => navigate("/budget")}
+          >
             Budgets
+          </button>
+
+          <button
+            className="nav-item"
+            onClick={() => navigate("/savings-goals")}
+          >
+            Savings
           </button>
 
           <button
@@ -388,9 +482,11 @@ function Budget() {
           >
             Reports
           </button>
+
         </nav>
 
         <div className="nav-right">
+
           <button
             className="profile-circle"
             onClick={() => navigate("/profile")}
@@ -405,271 +501,432 @@ function Budget() {
           >
             Logout
           </button>
+
         </div>
+
       </header>
 
-      {/* MAIN CONTENT */}
-      <main className="budget-container">
-        <section className="budget-heading">
-          <div>
-            <span className="budget-eyebrow">
-              PERSONAL FINANCE
-            </span>
+      {/* =====================================
+          MAIN CONTENT
+      ===================================== */}
 
-            <h1>
-              Plan your
-              <br />
-              <span>budget.</span>
-            </h1>
+      <main className="budget-content">
+
+        {/* HERO */}
+
+        <section className="budget-hero">
+
+          <p className="budget-eyebrow">
+            Budget Planning
+          </p>
+
+          <h1>
+            Plan your spending.
+          </h1>
+
+          <p>
+            Set monthly budgets and stay in control
+            of your expenses.
+          </p>
+
+        </section>
+
+        {/* =====================================
+            CREATE BUDGET
+        ===================================== */}
+
+        <section className="create-budget-section">
+
+          <div className="section-heading">
+
+            <h2>
+              Create Budget
+            </h2>
 
             <p>
-              Set spending limits and manage your monthly budget
-              with ease.
+              Set a spending limit for a category.
             </p>
+
           </div>
 
-          <div className="total-budget-card">
-            <span>Total Budget</span>
+          <form
+            className="budget-form"
+            onSubmit={handleCreateBudget}
+          >
 
-            <strong>
-              ₹{totalBudget.toLocaleString("en-IN")}
-            </strong>
+            {/* MONTH */}
 
-            <small>
-              {budgets.length}{" "}
-              {budgets.length === 1 ? "category" : "categories"}
-            </small>
-          </div>
-        </section>
+            <div className="form-group">
 
-        {/* ADD BUDGET */}
-        <section className="budget-form-card">
-          <div className="section-title">
-            <div>
-              <span>CREATE BUDGET</span>
-              <h2>Add Budget</h2>
+              <label htmlFor="month">
+                Month
+              </label>
+
+              <select
+                id="month"
+                value={month}
+                onChange={(e) =>
+                  setMonth(Number(e.target.value))
+                }
+              >
+                {months.map(
+                  (monthName, index) => (
+                    <option
+                      key={monthName}
+                      value={index + 1}
+                    >
+                      {monthName}
+                    </option>
+                  )
+                )}
+              </select>
+
             </div>
 
-            <div className="plus-icon">+</div>
-          </div>
+            {/* YEAR */}
 
-          <form onSubmit={handleAddBudget}>
-            <div className="form-grid">
-              <div className="form-group">
-                <label>Category</label>
+            <div className="form-group">
+
+              <label htmlFor="year">
+                Year
+              </label>
+
+              <input
+                id="year"
+                type="number"
+                min="2020"
+                max="2100"
+                value={year}
+                onChange={(e) =>
+                  setYear(Number(e.target.value))
+                }
+              />
+
+            </div>
+
+            {/* CATEGORY */}
+
+            <div className="form-group">
+
+              <label htmlFor="category">
+                Category
+              </label>
+
+              <select
+                id="category"
+                value={category}
+                onChange={(e) =>
+                  setCategory(e.target.value)
+                }
+              >
+
+                <option value="">
+                  Select category
+                </option>
+
+                {categories.map((item) => (
+                  <option
+                    key={item}
+                    value={item}
+                  >
+                    {item}
+                  </option>
+                ))}
+
+              </select>
+
+            </div>
+
+            {/* AMOUNT */}
+
+            <div className="form-group">
+
+              <label htmlFor="allocatedAmount">
+                Allocated Amount
+              </label>
+
+              <div className="amount-input-wrapper">
+
+                <span>
+                  ₹
+                </span>
 
                 <input
-                  type="text"
-                  placeholder="Food / Travel / Shopping"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  required
+                  id="allocatedAmount"
+                  type="number"
+                  min="1"
+                  placeholder="Enter amount"
+                  value={allocatedAmount}
+                  onChange={(e) =>
+                    setAllocatedAmount(
+                      e.target.value
+                    )
+                  }
                 />
+
               </div>
 
-              <div className="form-group">
-                <label>Allocated Amount</label>
-
-                <div className="input-with-symbol">
-                  <span>₹</span>
-
-                  <input
-                    type="number"
-                    min="0.01"
-                    step="0.01"
-                    placeholder="0.00"
-                    value={allocatedAmount}
-                    onChange={(e) =>
-                      setAllocatedAmount(e.target.value)
-                    }
-                    required
-                  />
-                </div>
-              </div>
             </div>
 
-            <div className="form-bottom">
-              <p>
-                Set a realistic limit for each spending category.
-              </p>
+            {/* CREATE */}
 
-              <button
-                type="submit"
-                className="add-budget-button"
-                disabled={saving}
-              >
-                {saving ? "Saving..." : "＋ Add Budget"}
-              </button>
-            </div>
+            <button
+              type="submit"
+              className="create-budget-button"
+            >
+              Create Budget
+            </button>
+
           </form>
+
         </section>
 
-        {/* STATUS MESSAGE */}
-        {message && (
-          <div
-            className={`budget-message ${
-              messageType === "error"
-                ? "message-error"
-                : "message-success"
-            }`}
-          >
-            <span>
-              {messageType === "error" ? "!" : "✓"}
-            </span>
+        {/* SUCCESS */}
 
+        {message && (
+          <div className="budget-success-message">
             {message}
           </div>
         )}
 
-        {/* BUDGET HISTORY */}
-        <section className="budget-records">
-          <div className="records-header">
+        {/* ERROR */}
+
+        {error && (
+          <div className="budget-error-message">
+            {error}
+          </div>
+        )}
+
+        {/* =====================================
+            MY BUDGETS
+        ===================================== */}
+
+        <section className="my-budgets-section">
+
+          <div className="section-heading-row">
+
             <div>
-              <span>YOUR PLAN</span>
-              <h2>Budget categories</h2>
+
+              <h2>
+                My Budgets
+              </h2>
+
+              <p>
+                Manage your monthly spending limits.
+              </p>
+
             </div>
 
-            <button onClick={() => navigate("/dashboard")}>
-              ← Dashboard
-            </button>
+            <span className="budget-count">
+
+              {budgets.length}{" "}
+
+              {budgets.length === 1
+                ? "budget"
+                : "budgets"}
+
+            </span>
+
           </div>
 
+          {/* LOADING */}
+
           {loading ? (
-            <div className="budget-empty">
-              <div className="loading-small" />
-              <p>Loading budgets...</p>
+
+            <div className="budget-loading">
+              Loading budgets...
             </div>
+
           ) : budgets.length === 0 ? (
-            <div className="budget-empty">
-              <div className="empty-budget-icon">₹</div>
-              <h3>No budgets yet</h3>
-              <p>
-                Add your first budget above and it will appear
-                here.
-              </p>
+
+            /* EMPTY */
+
+            <div className="empty-budget">
+              No budgets created yet.
             </div>
+
           ) : (
-            <div className="budget-list">
-              {budgets.map((item) => (
-                <div className="budget-row" key={item.id}>
-                  <div className="budget-row-icon">₹</div>
 
-                  {editingId === item.id ? (
+            /* GRID */
+
+            <div className="budget-grid">
+
+              {budgets.map((budget) => (
+
+                <div
+                  className="budget-card"
+                  key={budget.id}
+                >
+
+                  {/* CARD HEADER */}
+
+                  <div className="budget-card-top">
+
+                    <div>
+
+                      <h3>
+                        {budget.category}
+                      </h3>
+
+                      <p>
+                        {getMonthName(budget.month)}{" "}
+                        {budget.year}
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                  {/* =================================
+                      EDIT MODE
+                  ================================= */}
+
+                  {editingBudgetId === budget.id ? (
+
                     <div className="budget-edit-area">
-                      <input
-                        type="text"
-                        aria-label="Budget category"
-                        value={editCategory}
-                        onChange={(e) =>
-                          setEditCategory(e.target.value)
-                        }
-                      />
 
-                      <div className="edit-amount">
-                        <span>₹</span>
+                      <label>
+                        Allocated Amount
+                      </label>
+
+                      <div className="budget-input-wrapper">
+
+                        <span>
+                          ₹
+                        </span>
 
                         <input
                           type="number"
-                          min="0.01"
-                          step="0.01"
-                          aria-label="Allocated amount"
+                          min="1"
                           value={editAmount}
                           onChange={(e) =>
-                            setEditAmount(e.target.value)
+                            setEditAmount(
+                              e.target.value
+                            )
                           }
+                          className="budget-edit-amount"
                         />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="budget-row-info">
-                      <strong>
-                        {item.category || "Budget"}
-                      </strong>
 
-                      <span>Monthly budget</span>
-                    </div>
-                  )}
-
-                  {editingId === item.id ? (
-                    <div className="budget-edit-actions">
-                      <button
-                        type="button"
-                        className="save-edit"
-                        onClick={() =>
-                          handleUpdateBudget(item.id)
-                        }
-                        disabled={saving}
-                      >
-                        {saving ? "Saving..." : "Save"}
-                      </button>
-
-                      <button
-                        type="button"
-                        className="cancel-edit"
-                        onClick={cancelEdit}
-                        disabled={saving}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="budget-row-amount">
-                        ₹
-                        {Number(
-                          item.allocated_amount || 0
-                        ).toLocaleString("en-IN")}
                       </div>
 
-                      <div className="budget-row-actions">
+                      <div className="budget-card-actions">
+
                         <button
                           type="button"
-                          className="edit-budget"
-                          onClick={() => startEdit(item)}
-                          disabled={deletingId !== null}
+                          className="update-budget-button"
+                          onClick={() =>
+                            handleUpdateBudget(
+                              budget.id
+                            )
+                          }
+                        >
+                          Update
+                        </button>
+
+                        <button
+                          type="button"
+                          className="cancel-budget-button"
+                          onClick={handleCancelEdit}
+                        >
+                          Cancel
+                        </button>
+
+                      </div>
+
+                    </div>
+
+                  ) : (
+
+                    /* =================================
+                        NORMAL MODE
+                    ================================= */
+
+                    <>
+
+                      <div className="budget-amount-label">
+                        Allocated Amount
+                      </div>
+
+                      <div className="budget-amount">
+                        ₹
+                        {formatAmount(
+                          budget.allocated_amount
+                        )}
+                      </div>
+
+                      {/* PROGRESS */}
+
+                      <div className="budget-progress">
+
+                        <div className="budget-progress-header">
+
+                          <span>
+                            Spent
+                          </span>
+
+                          <span>
+                            0%
+                          </span>
+
+                        </div>
+
+                        <div className="budget-progress-bar">
+
+                          <div
+                            className="budget-progress-fill"
+                            style={{
+                              width: "0%",
+                            }}
+                          />
+
+                        </div>
+
+                      </div>
+
+                      {/* ACTIONS */}
+
+                      <div className="budget-card-actions">
+
+                        <button
+                          type="button"
+                          className="edit-budget-button"
+                          onClick={() =>
+                            handleEdit(budget)
+                          }
                         >
                           Edit
                         </button>
 
                         <button
                           type="button"
-                          className="delete-budget"
+                          className="delete-budget-button"
                           onClick={() =>
-                            handleDeleteBudget(item.id)
+                            handleDeleteBudget(
+                              budget.id
+                            )
                           }
-                          disabled={deletingId !== null}
                         >
-                          {deletingId === item.id
-                            ? "Deleting..."
-                            : "Delete"}
+                          Delete
                         </button>
+
                       </div>
+
                     </>
+
                   )}
+
                 </div>
+
               ))}
+
             </div>
+
           )}
+
         </section>
 
-        {/* BOTTOM SECTION */}
-        <section className="budget-cta">
-          <div>
-            <span>STAY ON TRACK</span>
-
-            <h2>Give every rupee a purpose.</h2>
-
-            <p>
-              Head back to your dashboard to see your overall
-              financial progress.
-            </p>
-          </div>
-
-          <button onClick={() => navigate("/dashboard")}>
-            View Dashboard →
-          </button>
-        </section>
       </main>
+
     </div>
   );
 }

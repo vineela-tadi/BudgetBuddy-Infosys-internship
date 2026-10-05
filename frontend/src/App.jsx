@@ -14,6 +14,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Analytics from "./pages/Analytics";
 import Notifications from "./pages/Notifications";
 import Reports from "./pages/Reports";
+import SavingsGoals from "./pages/SavingsGoals";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/reports" element={<Reports />} />
+        <Route path="/savings-goals" element={<SavingsGoals />} />
       </Routes>
     </BrowserRouter>
   );

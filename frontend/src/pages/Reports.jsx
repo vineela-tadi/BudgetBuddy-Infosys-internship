@@ -162,6 +162,13 @@ BB </div>
       </button>
 
       <button
+  className="nav-item"
+  onClick={() => navigate("/savings-goals")}
+>
+  Savings
+</button>
+
+      <button
         className="nav-item"
         onClick={() => navigate("/analytics")}
       >
